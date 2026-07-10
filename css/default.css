@@ -678,6 +678,44 @@ a.card-link:hover .card-meta::after {
   border-radius: var(--radius-md);
 }
 
+.entry table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5rem 0 2rem;
+  font-size: 1rem;
+}
+
+.entry th,
+.entry td {
+  text-align: left;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--color-hairline-soft);
+  vertical-align: top;
+}
+
+.entry th {
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  border-bottom-color: var(--color-hairline);
+}
+
+.entry td {
+  font-family: var(--font-serif);
+  color: var(--color-body);
+}
+
+.entry td:first-child {
+  font-family: var(--font-sans);
+  font-weight: 600;
+  color: var(--color-ink);
+  white-space: nowrap;
+  width: 9.5rem;
+}
+
 .entry a.external::after {
   content: "↗";
   font-size: 0.75em;
