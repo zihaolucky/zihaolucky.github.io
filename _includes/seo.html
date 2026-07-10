@@ -1,0 +1,119 @@
+{% assign seo_title = page.title | default: site.title %}
+{% if page.seo_title %}
+  {% assign seo_title = page.seo_title %}
+{% endif %}
+{% assign seo_description = page.description | default: site.description %}
+{% assign seo_image = page.image | default: site.social.image %}
+{% if seo_image and seo_image contains '://' %}
+  {% assign seo_image_url = seo_image %}
+{% elsif seo_image %}
+  {% assign seo_image_url = site.url | append: site.baseurl | append: seo_image %}
+{% endif %}
+{% assign seo_url = site.url | append: site.baseurl | append: page.url %}
+{% assign seo_type = 'website' %}
+{% if page.layout == 'post' %}
+  {% assign seo_type = 'article' %}
+{% endif %}
+{% assign page_lang = page.lang | default: site.lang | default: 'en' %}
+{% assign is_home = false %}
+{% if page.url == '/' or page.url == '/index.html' %}
+  {% assign is_home = true %}
+{% endif %}
+{% if is_home %}
+  {% assign display_title = site.title | append: ' — ' | append: site.author.title %}
+{% else %}
+  {% assign display_title = seo_title %}
+{% endif %}
+
+<title>{% if is_home %}{{ display_title }}{% elsif page.title and page.title != site.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+<meta name="description" content="{{ seo_description | strip_html | strip_newlines | truncate: 160 | xml_escape }}" />
+<meta name="author" content="{{ site.author.name }}" />
+{% if page.robots %}
+<meta name="robots" content="{{ page.robots }}" />
+{% endif %}
+<link rel="canonical" href="{{ seo_url }}" />
+
+<meta property="og:site_name" content="{{ site.title | xml_escape }}" />
+<meta property="og:locale" content="{% if page_lang == 'zh' %}zh_CN{% else %}en_US{% endif %}" />
+<meta property="og:type" content="{{ seo_type }}" />
+<meta property="og:title" content="{{ display_title | xml_escape }}" />
+<meta property="og:description" content="{{ seo_description | strip_html | strip_newlines | truncate: 200 | xml_escape }}" />
+<meta property="og:url" content="{{ seo_url }}" />
+{% if seo_image_url %}
+<meta property="og:image" content="{{ seo_image_url }}" />
+<meta property="og:image:alt" content="{{ page.image_alt | default: site.social.image_alt | default: seo_title | xml_escape }}" />
+{% endif %}
+{% if page.layout == 'post' %}
+<meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}" />
+<meta property="article:author" content="{{ site.author.name | xml_escape }}" />
+{% if page.categories.size > 0 %}
+<meta property="article:section" content="{{ page.categories | first | xml_escape }}" />
+{% endif %}
+{% endif %}
+
+<meta name="twitter:card" content="{% if seo_image_url %}summary_large_image{% else %}summary{% endif %}" />
+<meta name="twitter:title" content="{{ display_title | xml_escape }}" />
+<meta name="twitter:description" content="{{ seo_description | strip_html | strip_newlines | truncate: 200 | xml_escape }}" />
+{% if seo_image_url %}
+<meta name="twitter:image" content="{{ seo_image_url }}" />
+{% endif %}
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "{{ site.url }}{{ site.baseurl }}/#website",
+      "url": "{{ site.url }}{{ site.baseurl }}/",
+      "name": {{ site.title | jsonify }},
+      "description": {{ site.description | jsonify }},
+      "publisher": { "@id": "{{ site.url }}{{ site.baseurl }}/#person" }
+    },
+    {
+      "@type": "Person",
+      "@id": "{{ site.url }}{{ site.baseurl }}/#person",
+      "name": {{ site.author.name | jsonify }},
+      "url": "{{ site.url }}{{ site.baseurl }}/",
+      "jobTitle": {{ site.author.title | jsonify }},
+      "description": {{ site.author.tagline | jsonify }},
+      "email": {{ site.author.email | jsonify }},
+      "sameAs": [
+        "https://github.com/{{ site.author.github }}",
+        {{ site.author.linkedin | jsonify }}
+      ]
+    }{% if page.layout == 'post' %},
+    {
+      "@type": "BlogPosting",
+      "@id": "{{ seo_url }}#article",
+      "headline": {{ page.title | jsonify }},
+      "description": {{ seo_description | jsonify }},
+      "datePublished": "{{ page.date | date_to_xmlschema }}",
+      "dateModified": "{{ page.last_modified_at | default: page.date | date_to_xmlschema }}",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ seo_url }}"
+      },
+      "author": { "@id": "{{ site.url }}{{ site.baseurl }}/#person" },
+      "publisher": { "@id": "{{ site.url }}{{ site.baseurl }}/#person" }{% if seo_image_url %},
+      "image": {{ seo_image_url | jsonify }}{% endif %}{% if page.categories.size > 0 %},
+      "articleSection": {{ page.categories | first | jsonify }}{% endif %}
+    }{% elsif is_home or page.url contains '/about' %},
+    {
+      "@type": "ProfilePage",
+      "@id": "{{ seo_url }}#profile",
+      "url": "{{ seo_url }}",
+      "name": {{ display_title | jsonify }},
+      "mainEntity": { "@id": "{{ site.url }}{{ site.baseurl }}/#person" }
+    }{% else %},
+    {
+      "@type": "WebPage",
+      "@id": "{{ seo_url }}#webpage",
+      "url": "{{ seo_url }}",
+      "name": {{ seo_title | jsonify }},
+      "description": {{ seo_description | jsonify }},
+      "isPartOf": { "@id": "{{ site.url }}{{ site.baseurl }}/#website" }
+    }{% endif %}
+  ]
+}
+</script>

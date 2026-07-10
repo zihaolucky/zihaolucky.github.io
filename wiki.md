@@ -1,6 +1,8 @@
 ---
 layout: page
 title: Wiki
+sitemap: false
+robots: noindex, follow
 ---
 <div class="wiki">
     <h2>Javascript</h2>

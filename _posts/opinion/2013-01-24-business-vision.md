@@ -3,6 +3,7 @@ layout: post
 title: 以商科人的思维看世界
 description: 不论我们是工科、理科，还是文科的学生，我们都需要有一个可以用商业思维思考的头脑。什么是商业思维？你觉得商业是怎么样的，它也许就是怎么样的。
 category: opinion
+lang: zh
 ---
 
 ![Harvard Business](/images/business-vision/harvard-business.jpeg)

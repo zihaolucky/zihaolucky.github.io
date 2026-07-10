@@ -1,0 +1,24 @@
+---
+layout: null
+---
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  {% for page in site.pages %}
+  {% if page.sitemap != false and page.url and page.name != 'wiki.md' %}
+  {% unless page.url contains '.xml' or page.url contains '404' or page.url contains 'robots' %}
+  <url>
+    <loc>{{ site.url }}{{ site.baseurl }}{{ page.url }}</loc>
+    <lastmod>{{ site.time | date_to_xmlschema }}</lastmod>
+  </url>
+  {% endunless %}
+  {% endif %}
+  {% endfor %}
+  {% for post in site.posts %}
+  {% unless post.path contains "template" or post.sitemap == false %}
+  <url>
+    <loc>{{ site.url }}{{ site.baseurl }}{{ post.url }}</loc>
+    <lastmod>{{ post.date | date_to_xmlschema }}</lastmod>
+  </url>
+  {% endunless %}
+  {% endfor %}
+</urlset>

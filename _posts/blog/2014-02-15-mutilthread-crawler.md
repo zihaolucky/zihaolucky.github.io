@@ -3,6 +3,7 @@ layout: post
 title: 用Python Requests抓取知乎用户信息（二）
 description: 这次我们来聊聊多线程，试着提升抓取性能。
 category: blog
+lang: zh
 ---
 你可以先读一下[用Python Requests抓取知乎用户信息][3]了解文章的背景和细节；这篇文章主要关注对爬虫性能的改造。
 

@@ -2,6 +2,7 @@ title: Zihao Zheng
 description: AI Infrastructure & Speech-Language Systems Architect — building reliable, explainable, and verifiable AI at production scale
 url: https://zihaolucky.github.io
 baseurl: ""
+lang: en
 google_analytics: G-HGNZFRZPS4
 
 author:
@@ -12,6 +13,10 @@ author:
   google_scholar: ""
   title: "AI Infrastructure & Speech-Language Systems Architect"
   tagline: "Building reliable, explainable, and verifiable AI at production scale"
+
+social:
+  image: /images/projects/tensorboard-intro.png
+  image_alt: TensorBoard standalone project overview
 
 markdown: kramdown
 highlighter: rouge

@@ -3,6 +3,7 @@ layout: post
 title: 从一条微博说起，看看我们身边的人
 description: 毛主席教我们要敢于斗争。
 category: opinion
+lang: zh
 ---
 
 ##我的一条weibo

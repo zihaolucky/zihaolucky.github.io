@@ -3,6 +3,9 @@ layout: post
 title: How I became an IEEE Senior Member — and how I can refer you
 description: A practical walkthrough of my IEEE Senior Member elevation, what the application asks for, and an open offer to refer qualified peers in AI infrastructure, speech, and language systems.
 category: blog
+lang: en
+image: /images/2026-07-10-ieee-senior-member/certificate.png
+image_alt: IEEE Senior Membership Certificate for Zihao Zheng
 ---
 
 I'm glad to share that I have been elevated to **IEEE Senior Member**.

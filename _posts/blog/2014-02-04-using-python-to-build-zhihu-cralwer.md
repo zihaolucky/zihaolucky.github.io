@@ -3,6 +3,7 @@ layout: post
 title: 用Python Requests抓取知乎用户信息
 description: 人生苦短，我用Python
 category: blog
+lang: zh
 ---
 
 ## 写在前面

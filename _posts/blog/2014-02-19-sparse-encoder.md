@@ -3,6 +3,7 @@ layout: post
 title: Sparse Auto-encoder
 description: UFLDL学习笔记(一) 事物存在的合理性往往是让人意想不到的，如果我们善于思考和发现的话；自编码神经网络给我最大的惊喜是：别小瞧自编码器。不止如此，你会发现隐层也是很有意思的。
 category: blog
+lang: zh
 ---
 
 本系列文章是学习[UFLDL][2]的学习笔记和心得。这次我们从神经网络讲开去，说说自编码器的东西。

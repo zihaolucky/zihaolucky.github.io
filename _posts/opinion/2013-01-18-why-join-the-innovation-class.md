@@ -3,6 +3,7 @@ layout: post
 title: 我为什么要进入勷勤班
 description: 想写些东西很久了，但始终想不到是在这里、这时——此时的我就坐在书架之间。拿起笔写这篇申请。让我鼓起勇气写这东西的，是那个在一瞬间发现了好书后惊喜的自己。
 category: opinion
+lang: zh
 ---
 
 
