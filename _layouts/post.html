@@ -1,0 +1,33 @@
+---
+layout: default
+---
+
+<link rel="stylesheet" href="{{ site.baseurl }}/js/prettify/prettify.css" />
+
+<div class="post-layout" id="content">
+    <article class="entry">
+        <h1 class="entry-title"><a href="{{ page.url }}">{{ page.title }}</a></h1>
+        <p class="entry-date">
+            <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+            {% if page.categories.size > 0 %}
+            · <span class="category-label">{{ page.categories | first }}</span>
+            {% endif %}
+        </p>
+        {{ content }}
+    </article>
+</div>
+
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({
+    tex2jax: {
+      inlineMath: [['$','$'], ['\\(','\\)']],
+      processEscapes: true,
+      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  });
+</script>
+<script type="text/javascript" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+<script src="{{ site.baseurl }}/js/jquery-1.7.1.min.js"></script>
+<script src="{{ site.baseurl }}/js/post.js"></script>

@@ -1,0 +1,27 @@
+title: Zihao Zheng
+description: AI Infrastructure & Speech-Language Systems Architect — building reliable, explainable, and verifiable AI at production scale
+url: https://zihaolucky.github.io
+baseurl: ""
+
+author:
+  name: Zihao Zheng
+  email: "zihaolucky@gmail.com"
+  github: zihaolucky
+  linkedin: "https://www.linkedin.com/in/zihaolucky"
+  google_scholar: ""
+  title: "AI Infrastructure & Speech-Language Systems Architect"
+  tagline: "Building reliable, explainable, and verifiable AI at production scale"
+
+markdown: kramdown
+highlighter: rouge
+permalink: /:title
+feed: /atom.xml
+
+exclude:
+  - README.md
+  - drafts
+  - Gemfile
+  - Gemfile.lock
+  - vendor
+  - .bundle
+  - "**/template.md"

@@ -1,0 +1,70 @@
+---
+layout: post
+title: 用Python
+description: 人生苦短，我用Python。这次我们玩玩多线程编程，将爬虫改写成多线程的
+category: blog
+---
+
+##为什么提出多线程？
+这部分的知识是从[麦兜兜的博客][2]中搬过来的，例子非常棒！
+
+为什么要提出多线程呢？我们首先看一个单线程的例子。
+
+	from time import sleep,ctime
+ 
+	def loop0():
+	    print 'start loop 0 at:',ctime()
+	    sleep(4)
+	    print 'loop 0 done at:',ctime()
+ 
+	def loop1():
+	    print 'start loop 1 at:',ctime()
+	    sleep(2)
+	    print 'loop 1 done at:',ctime()
+ 
+	def main():
+	    print 'starting at:',ctime()
+	    loop0()
+	    loop1()
+	    print 'all DONE at:',ctime()
+ 
+	if __name__=='__main__':
+	    main()
+		
+**运行结果：**
+
+	>>>
+	starting at: Mon Aug 31 10:27:23 2009
+	start loop 0 at: Mon Aug 31 10:27:23 2009
+	loop 0 done at: Mon Aug 31 10:27:27 2009
+	start loop 1 at: Mon Aug 31 10:27:27 2009
+	loop 1 done at: Mon Aug 31 10:27:29 2009
+	all DONE at: Mon Aug 31 10:27:29 2009
+	>>>
+
+
+可以看到单线程中的两个循环，只有一个循环结束后另一个才开始。总共用了6秒多的时间。假设两个`loop`中执行的不是`sleep`，而是一个别的运算的话，如果我们能让这些运算并行执行的话，是不是可以减少总的运行时间呢，这就是我们提出多线程的前提。
+	
+	
+
+	
+	
+撒
+
+
+
+
+
+
+
+
+
+
+
+
+
+[zihaolucky]:    http://zihaolucky.github.io  "zihaolucky"
+[1]:    {{ page.url}}  ({{ page.title }})
+[2]: http://blog.sina.com.cn/s/blog_4b5039210100esc1.html
+
+

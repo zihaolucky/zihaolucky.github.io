@@ -1,0 +1,114 @@
+---
+layout: default
+title: Home
+---
+
+<section class="hero">
+    <div class="container">
+        <p class="hero-greeting">Personal site</p>
+        <h1>{{ site.author.name }}</h1>
+        <p class="hero-role">{{ site.author.title }}</p>
+        <p class="hero-subtitle">{{ site.author.tagline }}</p>
+        <div class="social-links">
+            {% if site.author.github %}
+            <a href="https://github.com/{{ site.author.github }}" target="_blank" rel="noopener noreferrer">GitHub</a>
+            {% endif %}
+            {% if site.author.linkedin and site.author.linkedin != "" %}
+            <a href="{{ site.author.linkedin }}" target="_blank" rel="noopener noreferrer">LinkedIn</a>
+            {% endif %}
+            {% if site.author.email and site.author.email != "" %}
+            <a href="mailto:{{ site.author.email }}">Email</a>
+            {% endif %}
+            {% if site.author.google_scholar and site.author.google_scholar != "" %}
+            <a href="{{ site.author.google_scholar }}" target="_blank" rel="noopener noreferrer">Google Scholar</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">About</h2>
+            <a class="section-link" href="{{ site.baseurl }}/about/">More about me →</a>
+        </div>
+        <div class="section-text">
+            <p>
+                I'm an AI infrastructure and speech-language systems architect with ~10 years
+                building production AI. Previously a core AI architect of Alibaba's Tmall Genie,
+                where I designed the NLU domain-classification engine and end-to-end ASR
+                architecture. Primary author of standalone TensorBoard, first inventor on two
+                granted patents, and a former Apache MXNet PMC member.
+            </p>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Selected work</h2>
+        </div>
+        <div class="card-grid">
+            <a class="card card-link" href="{{ site.baseurl }}/project/standalone-tensorboard/">
+                <h3>Standalone TensorBoard</h3>
+                <p>
+                    Primary author of <code>dmlc/tensorboard</code>. Decoupled TensorBoard from
+                    TensorFlow so MXNet and PyTorch teams could inspect training without
+                    framework lock-in. Adopted by AWS as the basis for <code>mxboard</code>;
+                    referenced by PyTorch's <code>tensorboardX</code>.
+                </p>
+                <div class="card-meta">Open Source · ML Infrastructure</div>
+            </a>
+            <a class="card card-link" href="{{ site.baseurl }}/project/indicator-loss-asr/">
+                <h3>Indicator Loss for Context-Aware ASR</h3>
+                <p>
+                    First inventor on patent CN113808593B. Explicit, step-level supervised
+                    gating for personalized speech recognition — deployed on Tmall Genie at
+                    national scale, enabling real-time bias-list updates without weeks-long
+                    retraining.
+                </p>
+                <div class="card-meta">Patent · Speech Recognition</div>
+            </a>
+            <a class="card card-link" href="{{ site.baseurl }}/project/memory-network-nlu/">
+                <h3>Memory-Network NLU for Tmall Genie</h3>
+                <p>
+                    First inventor on patent CN112002313B. Replaced brittle rule-template
+                    routing with a memory-network architecture fusing rules and learned
+                    representations, raising production domain-classification accuracy from
+                    ~65% to ~85%.
+                </p>
+                <div class="card-meta">Patent · Voice Assistants</div>
+            </a>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-header">
+            <h2 class="section-title">Recent Posts</h2>
+            <a class="section-link" href="{{ site.baseurl }}/blog/">All posts →</a>
+        </div>
+        <ul class="post-list">
+            {% for post in site.posts limit:6 %}
+            {% unless post.path contains "template" %}
+            <li>
+                <div class="post-item">
+                    <div>
+                        {% if post.categories.size > 0 %}
+                        <span class="category-label">{{ post.categories | first }}</span>
+                        {% endif %}
+                        <h3><a href="{{ site.baseurl }}{{ post.url }}">{{ post.title }}</a></h3>
+                        {% if post.description %}
+                        <p class="post-desc">{{ post.description }}</p>
+                        {% endif %}
+                    </div>
+                    <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %d, %Y" }}</time>
+                </div>
+            </li>
+            {% endunless %}
+            {% endfor %}
+        </ul>
+    </div>
+</section>
