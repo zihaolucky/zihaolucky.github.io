@@ -106,8 +106,9 @@ description: AI infrastructure and speech-language systems architect — patents
             <a class="section-link" href="{{ site.baseurl }}/blog/">All posts →</a>
         </div>
         <ul class="post-list">
-            {% for post in site.posts limit:6 %}
-            {% unless post.path contains "template" %}
+            {% assign listed = 0 %}
+            {% for post in site.posts %}
+            {% unless post.path contains "template" or post.translation %}
             <li>
                 <div class="post-item">
                     <div>
@@ -122,6 +123,8 @@ description: AI infrastructure and speech-language systems architect — patents
                     <time class="post-date" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%b %d, %Y" }}</time>
                 </div>
             </li>
+            {% assign listed = listed | plus: 1 %}
+            {% if listed >= 6 %}{% break %}{% endif %}
             {% endunless %}
             {% endfor %}
         </ul>

@@ -4,15 +4,30 @@ layout: default
 
 <link rel="stylesheet" href="{{ site.baseurl }}/js/prettify/prettify.css" />
 
+{% include lang-alternate.html %}
+
 <div class="post-layout" id="content">
     <article class="entry">
         <h1 class="entry-title"><a href="{{ page.url }}">{{ page.title }}</a></h1>
-        <p class="entry-date">
-            <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
-            {% if page.categories.size > 0 %}
-            · <span class="category-label">{{ page.categories | first }}</span>
+        <div class="entry-meta">
+            <p class="entry-date">
+                <time datetime="{{ page.date | date_to_xmlschema }}">{{ page.date | date: "%B %d, %Y" }}</time>
+                {% if page.categories.size > 0 %}
+                · <span class="category-label">{{ page.categories | first }}</span>
+                {% endif %}
+            </p>
+            {% if lang_alternate %}
+            <nav class="lang-switch" aria-label="Language">
+                {% if page.lang == 'zh' %}
+                <span class="lang-switch__opt is-active" aria-current="page">中文</span>
+                <a class="lang-switch__opt" href="{{ site.baseurl }}{{ lang_alternate.url }}" hreflang="en" lang="en">EN</a>
+                {% else %}
+                <a class="lang-switch__opt" href="{{ site.baseurl }}{{ lang_alternate.url }}" hreflang="zh-CN" lang="zh-CN">中文</a>
+                <span class="lang-switch__opt is-active" aria-current="page">EN</span>
+                {% endif %}
+            </nav>
             {% endif %}
-        </p>
+        </div>
         {{ content }}
     </article>
 </div>

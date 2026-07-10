@@ -16,8 +16,9 @@ layout: null
     {% endif %}
   </author>
 
-  {% for post in site.posts limit:20 %}
-  {% unless post.path contains "template" %}
+  {% assign feed_count = 0 %}
+  {% for post in site.posts %}
+  {% unless post.path contains "template" or post.translation %}
   <entry>
     <title>{{ post.title | xml_escape }}</title>
     <link href="{{ site.url }}{{ post.url }}" rel="alternate" type="text/html"/>
@@ -32,6 +33,8 @@ layout: null
     {% endif %}
     <content type="html">{{ post.content | xml_escape }}</content>
   </entry>
+  {% assign feed_count = feed_count | plus: 1 %}
+  {% if feed_count >= 20 %}{% break %}{% endif %}
   {% endunless %}
   {% endfor %}
 </feed>

@@ -32,6 +32,20 @@
 <meta name="robots" content="{{ page.robots }}" />
 {% endif %}
 <link rel="canonical" href="{{ seo_url }}" />
+{% include lang-alternate.html %}
+{% if lang_alternate %}
+  {% if page_lang == 'zh' %}
+    {% assign hreflang_zh_url = seo_url %}
+    {% assign hreflang_en_url = site.url | append: site.baseurl | append: lang_alternate.url %}
+  {% else %}
+    {% assign hreflang_zh_url = site.url | append: site.baseurl | append: lang_alternate.url %}
+    {% assign hreflang_en_url = seo_url %}
+  {% endif %}
+<link rel="alternate" hreflang="zh-CN" href="{{ hreflang_zh_url }}" />
+<link rel="alternate" hreflang="en" href="{{ hreflang_en_url }}" />
+<link rel="alternate" hreflang="x-default" href="{{ hreflang_zh_url }}" />
+<meta property="og:locale:alternate" content="{% if page_lang == 'zh' %}en_US{% else %}zh_CN{% endif %}" />
+{% endif %}
 
 <meta property="og:site_name" content="{{ site.title | xml_escape }}" />
 <meta property="og:locale" content="{% if page_lang == 'zh' %}zh_CN{% else %}en_US{% endif %}" />
@@ -95,7 +109,8 @@
         "@id": "{{ seo_url }}"
       },
       "author": { "@id": "{{ site.url }}{{ site.baseurl }}/#person" },
-      "publisher": { "@id": "{{ site.url }}{{ site.baseurl }}/#person" }{% if seo_image_url %},
+      "publisher": { "@id": "{{ site.url }}{{ site.baseurl }}/#person" },
+      "inLanguage": "{% if page_lang == 'zh' %}zh-CN{% else %}en{% endif %}"{% if seo_image_url %},
       "image": {{ seo_image_url | jsonify }}{% endif %}{% if page.categories.size > 0 %},
       "articleSection": {{ page.categories | first | jsonify }}{% endif %}
     }{% elsif is_home or page.url contains '/about' %},

@@ -11,7 +11,7 @@ description: Writing and notes by Zihao Zheng
 
     <ul class="post-list">
     {% for post in site.posts %}
-        {% unless post.path contains "template" %}
+        {% unless post.path contains "template" or post.translation %}
         <li>
             <div class="post-item">
                 <div>

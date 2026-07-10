@@ -1,0 +1,13 @@
+{% comment %}
+Resolves the paired language alternate for the current page.
+Sets: lang_alternate (post or nil)
+{% endcomment %}
+{% assign lang_alternate = nil %}
+{% if page.translation_key %}
+  {% assign lang_pair = site.posts | where: "translation_key", page.translation_key %}
+  {% for p in lang_pair %}
+    {% if p.url != page.url %}
+      {% assign lang_alternate = p %}
+    {% endif %}
+  {% endfor %}
+{% endif %}

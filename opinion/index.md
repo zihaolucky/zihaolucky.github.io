@@ -11,7 +11,7 @@ description: Opinion essays by Zihao Zheng
 
     <ul class="post-list">
     {% for post in site.categories.opinion %}
-        {% unless post.path contains "template" %}
+        {% unless post.path contains "template" or post.translation %}
         <li>
             <div class="post-item">
                 <div>
