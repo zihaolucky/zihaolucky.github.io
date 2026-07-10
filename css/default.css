@@ -601,12 +601,12 @@ a.card-link:hover .card-meta::after {
   margin-bottom: 0.75rem;
 }
 
-.entry-title a {
+.entry .entry-title a {
   color: var(--color-ink);
   text-decoration: none;
 }
 
-.entry-title a:hover {
+.entry .entry-title a:hover {
   color: var(--color-clay);
 }
 
