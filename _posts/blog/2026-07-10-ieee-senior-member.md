@@ -16,6 +16,16 @@ Senior Member is the highest IEEE membership grade you can apply for yourself. I
 
 This post is a short record of **how I went through the process**, what I found useful to prepare, and how I can help if you are applying in a related domain.
 
+## My timeline
+
+| Date | Milestone |
+| --- | --- |
+| **24 Apr 2026** | Created the Senior Member application |
+| **24 May 2026** | Submitted the application after all **3 references** were completed |
+| **25 Jun 2026** | Received the approval / elevation notification |
+
+End to end, that was about **two months**: one month to gather references and submit, then about one more month until the approval notice.
+
 ## What IEEE looks for
 
 In plain terms, you need to show that you:
