@@ -12,6 +12,15 @@
     <link rel="stylesheet" href="{{ site.baseurl }}/css/default.css" type="text/css" />
     <link rel="shortcut icon" href="{{ site.baseurl }}/favicon.ico" type="image/x-icon" />
     <link rel="alternate" type="application/atom+xml" title="Recent Entries" href="{{ site.feed }}" />
+    {% if site.google_analytics %}
+    <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.google_analytics }}"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', '{{ site.google_analytics }}');
+    </script>
+    {% endif %}
 </head>
 <body>
     <header class="site-header">
@@ -48,11 +57,5 @@
             <p class="footer-copy">&copy; {{ site.time | date: "%Y" }} {{ site.author.name }}. All rights reserved.</p>
         </div>
     </footer>
-
-    {% if site.goatcounter and site.goatcounter != "" %}
-    <script data-goatcounter="https://{{ site.goatcounter }}.goatcounter.com/count"
-            async
-            src="//gc.zgo.at/count.js"></script>
-    {% endif %}
 </body>
 </html>

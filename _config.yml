@@ -2,6 +2,7 @@ title: Zihao Zheng
 description: AI Infrastructure & Speech-Language Systems Architect — building reliable, explainable, and verifiable AI at production scale
 url: https://zihaolucky.github.io
 baseurl: ""
+google_analytics: G-HGNZFRZPS4
 
 author:
   name: Zihao Zheng
@@ -11,10 +12,6 @@ author:
   google_scholar: ""
   title: "AI Infrastructure & Speech-Language Systems Architect"
   tagline: "Building reliable, explainable, and verifiable AI at production scale"
-
-# GoatCounter site code (https://MYCODE.goatcounter.com)
-# Create a free account at https://www.goatcounter.com/signup
-goatcounter: zihaolucky
 
 markdown: kramdown
 highlighter: rouge
