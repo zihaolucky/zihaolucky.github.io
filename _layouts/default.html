@@ -48,5 +48,11 @@
             <p class="footer-copy">&copy; {{ site.time | date: "%Y" }} {{ site.author.name }}. All rights reserved.</p>
         </div>
     </footer>
+
+    {% if site.goatcounter and site.goatcounter != "" %}
+    <script data-goatcounter="https://{{ site.goatcounter }}.goatcounter.com/count"
+            async
+            src="//gc.zgo.at/count.js"></script>
+    {% endif %}
 </body>
 </html>
