@@ -49,11 +49,23 @@ description: AI infrastructure and speech-language systems architect — patents
         </div>
         <div class="section-text">
             <p>
-                I'm an AI infrastructure and speech-language systems architect with ~10 years
-                building production AI. Previously a core AI architect of Alibaba's Tmall Genie,
+                I am an AI Infrastructure &amp; Speech-Language Systems Architect.
+                Previously, I was a founding core AI architect of Alibaba's
+                <a href="https://en.wikipedia.org/wiki/Tmall_Genie" target="_blank" rel="noopener noreferrer">Tmall Genie</a>,
                 where I designed the NLU domain-classification engine and end-to-end ASR
-                architecture. Primary author of standalone TensorBoard, first inventor on two
-                granted patents, and a former Apache MXNet PMC member.
+                architecture serving tens of millions of households.
+                Before that, I received my B.Sc. in Information and Computing Science from
+                South China Normal University.
+            </p>
+            <p>
+                I am the primary author of standalone TensorBoard
+                (<a href="https://github.com/dmlc/tensorboard" target="_blank" rel="noopener noreferrer"><code>dmlc/tensorboard</code></a>),
+                first inventor on two granted patents in
+                speech and language systems, and a former
+                <a href="https://mxnet.apache.org/" target="_blank" rel="noopener noreferrer">Apache MXNet</a>
+                PMC Member and Committer.
+                I care about building AI that operators can inspect, verify, and trust at
+                production scale.
             </p>
         </div>
     </div>
@@ -102,6 +114,32 @@ description: AI infrastructure and speech-language systems architect — patents
 <section class="section">
     <div class="container">
         <div class="section-header">
+            <h2 class="section-title">Academic Services</h2>
+        </div>
+        <div class="section-text academic-services">
+            <ul>
+                <li>
+                    <strong>Conference Program Committee Member / Reviewer</strong>
+                    <ul>
+                        <li>Empirical Methods in Natural Language Processing (EMNLP) Industry Track, 2026</li>
+                        <li>ACM Conference on Recommender Systems (RecSys) Research &amp; Practice Notes and Demos Tracks, 2026</li>
+                    </ul>
+                </li>
+                <li>
+                    <strong>Workshop Reviewer</strong>
+                    <ul>
+                        <li>Workshop on Noisy and User-generated Text (WNUT), @EMNLP 2026</li>
+                        <li>Efficient Representation Learning for Multimodal Information Retrieval (EReL@MIR), @ACM MM 2026</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</section>
+
+<section class="section">
+    <div class="container">
+        <div class="section-header">
             <h2 class="section-title">Recent Posts</h2>
             <a class="section-link" href="{{ site.baseurl }}/blog/">All posts →</a>
         </div>
@@ -124,7 +162,7 @@ description: AI infrastructure and speech-language systems architect — patents
                 </div>
             </li>
             {% assign listed = listed | plus: 1 %}
-            {% if listed >= 6 %}{% break %}{% endif %}
+            {% if listed >= 3 %}{% break %}{% endif %}
             {% endunless %}
             {% endfor %}
         </ul>

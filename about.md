@@ -27,6 +27,15 @@ I am first inventor on two granted patents covering memory-network NLU domain cl
 
 Accuracy alone is not enough. AI deployed to millions of users must be inspectable by the engineers who maintain it, verifiable against the knowledge it encodes, and reliable without treating the model as a black box. Every major contribution I have made expresses that conviction across a different layer of the stack.
 
+## Academic Services
+
+- **Conference Program Committee Member / Reviewer**
+  - Empirical Methods in Natural Language Processing (EMNLP) Industry Track, 2026
+  - ACM Conference on Recommender Systems (RecSys) Research & Practice Notes and Demos Tracks, 2026
+- **Workshop Reviewer**
+  - Workshop on Noisy and User-generated Text (WNUT), @EMNLP 2026
+  - Efficient Representation Learning for Multimodal Information Retrieval (EReL@MIR), @ACM MM 2026
+
 ## Get in touch
 
 - [CV (PDF)]({{ site.baseurl }}/files/cv.pdf)

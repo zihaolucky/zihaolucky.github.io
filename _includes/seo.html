@@ -20,7 +20,7 @@
   {% assign is_home = true %}
 {% endif %}
 {% if is_home %}
-  {% assign display_title = site.title | append: ' — ' | append: site.author.title %}
+  {% assign display_title = site.title | append: "'s Homepage" %}
 {% else %}
   {% assign display_title = seo_title %}
 {% endif %}
