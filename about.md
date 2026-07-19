@@ -29,6 +29,7 @@ Accuracy alone is not enough. AI deployed to millions of users must be inspectab
 
 ## Get in touch
 
+- [CV (PDF)]({{ site.baseurl }}/files/cv.pdf)
 - [GitHub](https://github.com/zihaolucky)
 - [LinkedIn](https://www.linkedin.com/in/zihaolucky)
 - [Email](mailto:zihaolucky@gmail.com)
