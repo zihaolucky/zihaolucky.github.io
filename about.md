@@ -34,6 +34,7 @@ Accuracy alone is not enough. AI deployed to millions of users must be inspectab
   - ACM Conference on Recommender Systems (RecSys) Research & Practice Notes and Demos Tracks, 2026
 - **Workshop Reviewer**
   - Workshop on Noisy and User-generated Text (WNUT), @EMNLP 2026
+  - Third Workshop on Uncertainty-Aware NLP (UncertaiNLP), @EMNLP 2026
   - Efficient Representation Learning for Multimodal Information Retrieval (EReL@MIR), @ACM MM 2026
 
 ## Get in touch
