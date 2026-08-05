@@ -2144,17 +2144,62 @@ pre code {
   animation: tzr-off 6s ease-in-out infinite;
 }
 
+/* Two options of equal standing, so the swap holds each for the same beat. */
+.tzr-alt-a {
+  animation: tzr-alt-a 6s ease-in-out infinite;
+}
+
+.tzr-alt-b {
+  animation: tzr-alt-b 6s ease-in-out infinite;
+}
+
+@keyframes tzr-alt-a {
+  0%, 44% { opacity: 1; }
+  50%, 94% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes tzr-alt-b {
+  0%, 44% { opacity: 0; }
+  50%, 94% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.tzr-name {
+  font-size: 10px;
+  font-weight: 600;
+  fill: var(--color-ink);
+}
+
+.tzr-score {
+  font-family: var(--font-serif);
+  font-size: 13px;
+  font-weight: 600;
+  fill: var(--color-ink);
+}
+
+.tzr-pip-ok {
+  fill: var(--color-sky);
+}
+
+.tzr-pip-bad {
+  fill: var(--color-clay);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .tzr-sweep,
   .tzr-on,
   .tzr-off,
   .tzr-a,
-  .tzr-b {
+  .tzr-b,
+  .tzr-alt-a,
+  .tzr-alt-b {
     animation: none;
   }
 
   .tzr-off,
-  .tzr-a {
+  .tzr-a,
+  .tzr-alt-b {
     opacity: 0;
   }
 }
@@ -2319,140 +2364,6 @@ pre code {
   margin-top: 0.9rem;
 }
 
-/* Slider */
-
-.xpl-control {
-  background: #ffffff;
-  border: 1px solid var(--color-hairline-soft);
-  border-radius: var(--radius-md);
-  padding: 1.1rem 1.25rem 1.25rem;
-  margin-bottom: 1.25rem;
-}
-
-.xpl-label {
-  display: block;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--color-ink);
-  margin-bottom: 0.85rem;
-}
-
-.xpl-slider-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.xpl-slider {
-  flex: 1;
-  -webkit-appearance: none;
-  appearance: none;
-  height: 4px;
-  border-radius: 2px;
-  background: var(--color-hairline);
-  cursor: pointer;
-}
-
-.xpl-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: var(--color-clay);
-  border: 2px solid #ffffff;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-}
-
-.xpl-slider::-moz-range-thumb {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--color-clay);
-  border: 2px solid #ffffff;
-  cursor: pointer;
-}
-
-.xpl-slider:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.xpl-slider:disabled::-webkit-slider-thumb {
-  background: var(--color-muted-soft);
-  cursor: not-allowed;
-}
-
-.xpl-readout {
-  font-family: var(--font-mono);
-  font-size: 1rem;
-  font-weight: 500;
-  color: var(--color-ink);
-  min-width: 3.4rem;
-  text-align: right;
-}
-
-.xpl-ends {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.75rem;
-  color: var(--color-muted-soft);
-  margin-top: 0.4rem;
-  padding-right: 4.4rem;
-}
-
-/* Score curve */
-
-.xpl-curve {
-  margin-bottom: 1.25rem;
-}
-
-.xpl-curve svg {
-  display: block;
-  width: 100%;
-  height: auto;
-}
-
-.xpl-curve .cv-line {
-  fill: none;
-  stroke: var(--color-ink);
-  stroke-width: 2;
-  stroke-linejoin: round;
-}
-
-.xpl-curve .cv-area {
-  fill: rgba(217, 119, 87, 0.1);
-  stroke: none;
-}
-
-.xpl-curve .cv-target {
-  stroke: var(--color-clay);
-  stroke-width: 1;
-  stroke-dasharray: 4 3;
-  fill: none;
-}
-
-.xpl-curve .cv-dial {
-  stroke: var(--color-clay);
-  stroke-width: 2;
-}
-
-.xpl-curve .cv-axis {
-  stroke: var(--color-hairline);
-  stroke-width: 1;
-}
-
-.xpl-curve text {
-  font-family: var(--font-sans);
-  font-size: 8px;
-  fill: var(--color-muted);
-}
-
-.xpl-curve .cv-strong {
-  font-weight: 700;
-  fill: var(--color-ink);
-}
 
 /* Tally */
 
@@ -2493,6 +2404,85 @@ pre code {
   padding: 0.7rem 0;
   border-top: 1px solid var(--color-hairline-soft);
   margin: 0;
+}
+
+.xpl-rows--cascade .xpl-row {
+  grid-template-columns: minmax(0, 1fr) 150px;
+}
+
+/* Scoreboard of the ways the two components can be wired together */
+
+.xpl-board {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr));
+  gap: 0.6rem;
+  margin-bottom: 0.6rem;
+}
+
+.xpl-opt {
+  display: block;
+  width: 100%;
+  text-align: left;
+  font-family: var(--font-sans);
+  background: #ffffff;
+  border: 1px solid var(--color-hairline);
+  border-radius: var(--radius-md);
+  padding: 0.7rem 0.8rem 0.75rem;
+  cursor: pointer;
+  transition: border-color var(--transition), background var(--transition);
+}
+
+.xpl-opt:hover {
+  border-color: var(--color-muted-soft);
+}
+
+.xpl-opt.is-active {
+  border-color: var(--color-ink);
+  background: var(--color-card);
+}
+
+.xpl-opt:focus-visible {
+  outline: 2px solid var(--color-clay);
+  outline-offset: 2px;
+}
+
+.opt-name {
+  display: block;
+  font-size: 0.76rem;
+  font-weight: 600;
+  color: var(--color-muted);
+  line-height: 1.3;
+  min-height: 2.1em;
+}
+
+.opt-score {
+  display: block;
+  font-family: var(--font-serif);
+  font-size: 1.45rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-ink);
+  margin-top: 0.2rem;
+}
+
+.opt-pips {
+  display: flex;
+  gap: 3px;
+  margin-top: 0.4rem;
+}
+
+.pip {
+  flex: 1 1 0;
+  height: 7px;
+  border-radius: 2px;
+}
+
+.pip.is-ok {
+  background: var(--color-sky);
+}
+
+.pip.is-bad {
+  background: var(--color-clay);
 }
 
 .xpl-utt {
@@ -2569,41 +2559,6 @@ pre code {
   color: var(--color-sky);
 }
 
-.xpl-track {
-  position: relative;
-  height: 24px;
-  border-radius: 4px;
-  background: var(--color-card-alt);
-  overflow: hidden;
-}
-
-.xpl-track-ok {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  background: rgba(217, 119, 87, 0.32);
-}
-
-.xpl-track-dial {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: var(--color-ink);
-  transform: translateX(-1px);
-}
-
-.xpl-track-dot {
-  position: absolute;
-  top: 50%;
-  width: 12px;
-  height: 12px;
-  margin-top: -6px;
-  margin-left: -6px;
-  border-radius: 50%;
-  background: var(--color-clay);
-  border: 2px solid #ffffff;
-}
 
 .xpl-track-cap {
   font-size: 0.7rem;
@@ -3319,17 +3274,14 @@ pre code {
     grid-template-columns: 1fr;
   }
 
-  .xpl-row {
+  .xpl-row,
+  .xpl-rows--cascade .xpl-row {
     grid-template-columns: 1fr;
     gap: 0.5rem;
   }
 
   .xpl-verdict {
     text-align: left;
-  }
-
-  .xpl-ends {
-    padding-right: 0;
   }
 }
 

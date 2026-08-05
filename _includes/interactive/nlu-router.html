@@ -1,24 +1,25 @@
 <div class="xpl" data-explorable="nlu-router">
-  <p class="xpl-kicker">Interactive — try to tune the cascade</p>
-  <h3 class="xpl-title">Find the threshold that routes all seven correctly</h3>
+  <p class="xpl-kicker">Interactive — try both orderings</p>
+  <h3 class="xpl-title">There is no dial here. Only which component wins.</h3>
   <p class="xpl-intro">
-    The industry standard was <b>rules first, then model</b>. Nothing is blended: step 1 checks the hand-written
-    templates, and if a match clears the bar the request is routed there and <b>step 2 never runs at all</b>. The
-    learned model only sees what the rules let through. That leaves one thing to tune — how strong a match has to
-    be before the rule is trusted. Drag it and try to find a threshold where all seven of these real request types
-    land in the right place.
+    The industry standard was <b>rules first, then model</b>: hand-written templates are checked, and a template
+    that matches routes the request outright — the model never runs. There is nothing to tune. A template either
+    matches or it does not, so the only decision the architecture offers is <b>which component outranks the
+    other</b>, taken once and applied to every request the system will ever see. Try both orderings on these
+    seven real request types.
   </p>
   <div data-role="mount">
     <p class="xpl-fallback">
-      This interactive needs JavaScript. In short: no threshold on match strength routes all seven utterances
-      correctly, because a template can match strongly and still be wrong — and no threshold can tell those
-      two apart. The patented memory network weighs the template evidence per utterance instead.
+      This interactive needs JavaScript. In short: a cascade offers only two wirings — templates outrank the
+      model, or the model outranks the templates — and each routes five of these seven correctly while failing
+      on a different pair. Some requests need the template overruled, others need it obeyed, and a fixed
+      ordering cannot be both. The patented memory network weighs the two per utterance instead.
     </p>
   </div>
   <p class="xpl-note">
-    Illustrative model of the mechanism, not production data — the match scores are simplified so the
-    trade-off is visible in seven cases instead of millions. The production result of replacing the cascade
-    with learned fusion is on the chart further down: <b>~65% → ~85%</b> domain-classification accuracy, and
-    <b>35%</b> fewer routing errors from the fusion layer alone.
+    Illustrative model of the mechanism, not production data — seven cases chosen so the trade-off is visible
+    at a glance instead of across millions. The production result of replacing the cascade with learned fusion
+    is on the chart further down: <b>~65% → ~85%</b> domain-classification accuracy, and <b>35%</b> fewer
+    routing errors from the fusion layer alone.
   </p>
 </div>

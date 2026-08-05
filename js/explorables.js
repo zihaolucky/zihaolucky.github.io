@@ -23,106 +23,108 @@
   /* ======================================================================
      1. The rule-first cascade — patent CN112002313B
 
-     The industry baseline was "first rules, then model": a template match
-     wins outright, and the learned model only runs when nothing matched.
-     The single tunable is how strong a match has to be before the rule is
-     trusted. Seven utterances; the reader discovers that no threshold routes
-     all seven, because match strength does not tell you match correctness.
+     The industry baseline was "first rules, then model". A hand-written
+     template either matches or it does not; there is no confidence dial to
+     turn. The only decision available is which component outranks the other,
+     and that ordering is fixed once for every utterance the system will ever
+     see. These seven show why no ordering can be right: some need the
+     template overruled, others need it obeyed, and a cascade cannot tell
+     which kind it is holding.
      ====================================================================== */
 
   var NLU_CASES = [
     {
       utterance: '“play Blue and White Porcelain”',
       truth: 'Music',
-      rule: { domain: 'Music', score: 0.92, note: 'template <b>play @{song}</b> matches the catalogue' },
-      model: { domain: 'Music', score: 0.85 },
+      rule: { domain: 'Music', note: '<b>play @{song}</b> matches the catalogue' },
+      model: { domain: 'Music' },
       learned: 0.55
     },
     {
       utterance: '“Jay Chou’s father”',
       truth: 'Q&A',
-      rule: { domain: 'Music', score: 0.90, note: 'template <b>@{artist}’s @{song}</b> matches — but the user wants a fact' },
-      model: { domain: 'Q&A', score: 0.30 },
+      rule: { domain: 'Music', note: '<b>@{artist}’s @{song}</b> matches — 父亲 really is a song' },
+      model: { domain: 'Q&A' },
       learned: 0.12
     },
     {
       utterance: '“turn on the bard room light”',
       truth: 'Smart home',
-      rule: { domain: 'Smart home', score: 0.88, note: 'template <b>turn on the * light</b> survives the transcription slip' },
-      model: { domain: 'Music', score: 0.59 },
+      rule: { domain: 'Smart home', note: '<b>turn on the * light</b> survives the transcription slip' },
+      model: { domain: 'Music' },
       learned: 0.78
     },
     {
       utterance: '“I want to buy the one I looked at yesterday”',
       truth: 'Shopping',
       rule: null,
-      model: { domain: 'Shopping', score: 0.78 },
+      model: { domain: 'Shopping' },
       learned: 0.05
     },
     {
       utterance: '“put on something a bit more cheerful”',
       truth: 'Music',
       rule: null,
-      model: { domain: 'Music', score: 0.71 },
+      model: { domain: 'Music' },
       learned: 0.08
     },
     {
       utterance: '“will I need an umbrella tomorrow”',
       truth: 'Weather',
-      rule: { domain: 'Q&A', score: 0.46, note: 'a generic question template claims it' },
-      model: { domain: 'Weather', score: 0.75 },
+      rule: { domain: 'Q&A', note: '<b>generic question</b> pattern claims it' },
+      model: { domain: 'Weather' },
       learned: 0.30
     },
     {
       utterance: '“add milk to my shopping list”',
       truth: 'Shopping',
-      rule: { domain: 'Shopping', score: 0.62, note: 'template <b>add * to my * list</b> matches' },
-      model: { domain: 'Smart home', score: 0.75 },
+      rule: { domain: 'Shopping', note: '<b>add * to my * list</b> matches' },
+      model: { domain: 'Smart home' },
       learned: 0.82
     }
   ];
 
-  /* A rule-first cascade: the template wins if its match score clears the
-     threshold, otherwise the request falls through to the learned model. */
-  function nluRoute(item, threshold) {
-    if (item.rule && item.rule.score >= threshold) {
-      return { domain: item.rule.domain, source: 'rule' };
-    }
-    return { domain: item.model.domain, source: 'model' };
-  }
-
-  /* The learned system has no threshold: attention weighs the template
-     evidence for this utterance, and the majority of that weight decides. */
-  function nluRouteLearned(item) {
-    return item.learned > 0.5
+  /* Rules first, then model — the industry standard. A template match wins
+     outright, and the model is reached only when nothing matched at all. */
+  function nluRouteRulesFirst(item) {
+    return item.rule
       ? { domain: item.rule.domain, source: 'rule' }
       : { domain: item.model.domain, source: 'model' };
   }
 
-  /* The band of thresholds for which this one utterance routes correctly. */
-  function nluWindow(item) {
-    var modelRight = item.model.domain === item.truth;
-    if (!item.rule) return modelRight ? { from: 0, to: 1 } : null;
-    var ruleRight = item.rule.domain === item.truth;
-    if (ruleRight && modelRight) return { from: 0, to: 1 };
-    /* The rule fires at or below its own match score, so "trust the rule"
-       means a threshold no higher than that score. */
-    if (ruleRight) return { from: 0, to: item.rule.score };
-    if (modelRight) return { from: item.rule.score, to: 1 };
-    return null;
+  /* The only other way to order the same two components: the model decides,
+     and the templates are demoted to a backstop for what it will not answer.
+     These seven all get a model answer, so the templates never fire. */
+  function nluRouteModelFirst(item) {
+    return { domain: item.model.domain, source: 'model' };
   }
 
-  function nluCorrect(item, threshold) {
-    var routed = nluRoute(item, threshold);
-    return !!routed && routed.domain === item.truth;
+  /* The patent removes the ordering. Attention weighs the template evidence
+     against the semantics for this utterance, and the larger share decides. */
+  function nluRouteLearned(item) {
+    return item.rule && item.learned > 0.5
+      ? { domain: item.rule.domain, source: 'rule' }
+      : { domain: item.model.domain, source: 'model' };
   }
 
-  function nluCount(threshold) {
-    var n = 0;
-    for (var i = 0; i < NLU_CASES.length; i++) {
-      if (nluCorrect(NLU_CASES[i], threshold)) n++;
+  var NLU_WIRINGS = [
+    { id: 'rules', name: 'Rules first, then model', route: nluRouteRulesFirst },
+    { id: 'model', name: 'Model first, rules as backstop', route: nluRouteModelFirst },
+    { id: 'learned', name: 'Weighed per utterance (the patent)', route: nluRouteLearned }
+  ];
+
+  function nluWiring(id) {
+    for (var i = 0; i < NLU_WIRINGS.length; i++) {
+      if (NLU_WIRINGS[i].id === id) return NLU_WIRINGS[i];
     }
-    return n;
+    return NLU_WIRINGS[0];
+  }
+
+  function nluOutcomes(wiring) {
+    return NLU_CASES.map(function (item) {
+      var routed = wiring.route(item);
+      return { routed: routed, ok: routed.domain === item.truth };
+    });
   }
 
   function initNluRouter(root) {
@@ -130,117 +132,37 @@
     if (!mount) return;
 
     var total = NLU_CASES.length;
-    var state = { w: 0.8, mode: 'fixed' };
+    var state = { wiring: 'rules' };
 
-    /* --- score curve ------------------------------------------------- */
-    var SVG_NS = 'http://www.w3.org/2000/svg';
-    var curveWrap = el('div', 'xpl-curve');
-    var svg = document.createElementNS(SVG_NS, 'svg');
-    svg.setAttribute('viewBox', '0 0 400 100');
-    svg.setAttribute('role', 'img');
-    svg.setAttribute('aria-label',
-      'Chart of how many of the seven utterances route correctly for every possible match threshold. ' +
-      'The line never reaches seven: at least one utterance breaks at every threshold.');
+    /* --- scoreboard: every way to wire these two components ------------- */
+    var board = el('div', 'xpl-board');
+    var optRefs = NLU_WIRINGS.map(function (wiring) {
+      var btn = el('button', 'xpl-opt');
+      btn.type = 'button';
+      btn.appendChild(el('span', 'opt-name', wiring.name));
 
-    var X0 = 36, X1 = 390, YTOP = 16, YBASE = 74;
-    function cx(w) { return X0 + w * (X1 - X0); }
-    function cy(n) { return YBASE - (n / total) * (YBASE - YTOP); }
+      var outcomes = nluOutcomes(wiring);
+      var correct = 0;
+      var pips = el('span', 'opt-pips');
+      outcomes.forEach(function (o, i) {
+        if (o.ok) correct++;
+        var pip = el('span', 'pip ' + (o.ok ? 'is-ok' : 'is-bad'));
+        pip.title = NLU_CASES[i].utterance + (o.ok ? ' — correct' : ' — wrong');
+        pips.appendChild(pip);
+      });
 
-    var area = document.createElementNS(SVG_NS, 'path');
-    area.setAttribute('class', 'cv-area');
-    var line = document.createElementNS(SVG_NS, 'path');
-    line.setAttribute('class', 'cv-line');
+      btn.appendChild(el('span', 'opt-score', correct + ' / ' + total));
+      btn.appendChild(pips);
+      btn.setAttribute('aria-label', wiring.name + ': ' + correct + ' of ' + total + ' routed correctly');
+      btn.addEventListener('click', function () { state.wiring = wiring.id; render(); });
+      board.appendChild(btn);
+      return { wiring: wiring, btn: btn };
+    });
 
-    var SAMPLES = 240;
-    var dLine = '';
-    var prevY = null;
-    for (var s = 0; s <= SAMPLES; s++) {
-      var wv = s / SAMPLES;
-      var y = cy(nluCount(wv));
-      var x = cx(wv);
-      if (prevY === null) {
-        dLine += 'M' + x.toFixed(2) + ',' + y.toFixed(2);
-      } else if (y !== prevY) {
-        dLine += 'L' + x.toFixed(2) + ',' + prevY.toFixed(2) + 'L' + x.toFixed(2) + ',' + y.toFixed(2);
-      }
-      prevY = y;
-    }
-    dLine += 'L' + X1 + ',' + prevY.toFixed(2);
-    line.setAttribute('d', dLine);
-    area.setAttribute('d', dLine + 'L' + X1 + ',' + YBASE + 'L' + X0 + ',' + YBASE + 'Z');
-
-    var target = document.createElementNS(SVG_NS, 'line');
-    target.setAttribute('class', 'cv-target');
-    target.setAttribute('x1', X0); target.setAttribute('x2', X1);
-    target.setAttribute('y1', cy(total)); target.setAttribute('y2', cy(total));
-
-    var axis = document.createElementNS(SVG_NS, 'line');
-    axis.setAttribute('class', 'cv-axis');
-    axis.setAttribute('x1', X0); axis.setAttribute('x2', X1);
-    axis.setAttribute('y1', YBASE); axis.setAttribute('y2', YBASE);
-
-    function svgText(x, y, str, cls, anchor) {
-      var t = document.createElementNS(SVG_NS, 'text');
-      t.setAttribute('x', x); t.setAttribute('y', y);
-      if (cls) t.setAttribute('class', cls);
-      if (anchor) t.setAttribute('text-anchor', anchor);
-      t.textContent = str;
-      return t;
-    }
-
-    var dial = document.createElementNS(SVG_NS, 'line');
-    dial.setAttribute('class', 'cv-dial');
-    dial.setAttribute('y1', 10); dial.setAttribute('y2', YBASE + 4);
-
-    svg.appendChild(area);
-    svg.appendChild(target);
-    svg.appendChild(axis);
-    svg.appendChild(line);
-    svg.appendChild(dial);
-    svg.appendChild(svgText(X0 - 6, cy(total) + 3, 'all ' + total, null, 'end'));
-    svg.appendChild(svgText(X0 - 6, YBASE + 3, '0', null, 'end'));
-    svg.appendChild(svgText(X0, 94, 'any match wins', null, 'start'));
-    svg.appendChild(svgText((X0 + X1) / 2, 94, 'match must score 0.50', null, 'middle'));
-    svg.appendChild(svgText(X1, 94, 'only a perfect match wins', null, 'end'));
-    curveWrap.appendChild(svg);
-
-    var curveCap = el('p', 'xpl-track-cap');
-    curveCap.textContent = 'Utterances routed correctly, at every possible threshold. The dashed line is a perfect score — the curve never touches it.';
-    curveWrap.appendChild(curveCap);
-
-    /* --- control ------------------------------------------------------ */
-    var control = el('div', 'xpl-control');
-    var label = el('label', 'xpl-label', 'How strong must a template match be before the rule wins and the model never runs?');
-    label.setAttribute('for', 'nluDial');
-
-    var sliderRow = el('div', 'xpl-slider-row');
-    var slider = el('input', 'xpl-slider');
-    slider.type = 'range';
-    slider.id = 'nluDial';
-    slider.min = '0';
-    slider.max = '100';
-    slider.step = '1';
-    slider.value = '80';
-    var readout = el('span', 'xpl-readout', '0.80');
-    sliderRow.appendChild(slider);
-    sliderRow.appendChild(readout);
-
-    var ends = el('div', 'xpl-ends');
-    ends.appendChild(el('span', null, 'trust every match'));
-    ends.appendChild(el('span', null, 'trust almost none'));
-
-    var modes = el('div', 'xpl-modes');
-    var btnFixed = el('button', 'xpl-btn is-active', 'One threshold for everything (the cascade)');
-    btnFixed.type = 'button';
-    var btnLearned = el('button', 'xpl-btn', 'Weighed per utterance (the patent)');
-    btnLearned.type = 'button';
-    modes.appendChild(btnFixed);
-    modes.appendChild(btnLearned);
-
-    control.appendChild(label);
-    control.appendChild(sliderRow);
-    control.appendChild(ends);
-    control.appendChild(modes);
+    var boardCap = el('p', 'xpl-track-cap',
+      'Each square is one of the seven requests. There is no dial here — a template either matches or it does not, ' +
+      'so the only choice a cascade offers is which component outranks the other. Both orderings score the same, ' +
+      'and they fail on different requests.');
 
     /* --- tally --------------------------------------------------------- */
     var tally = el('div', 'xpl-tally');
@@ -250,7 +172,7 @@
     tally.appendChild(tallyText);
 
     /* --- rows ---------------------------------------------------------- */
-    var rows = el('ol', 'xpl-rows');
+    var rows = el('ol', 'xpl-rows xpl-rows--cascade');
     var rowRefs = NLU_CASES.map(function (item) {
       var li = el('li', 'xpl-row');
 
@@ -262,7 +184,7 @@
       stepRule.appendChild(el('span', 'cas-n', '1'));
       var ruleBody = el('span', 'cas-body');
       ruleBody.innerHTML = item.rule
-        ? 'Template ' + item.rule.note + ' → <b>' + item.rule.domain + '</b>, match ' + item.rule.score.toFixed(2)
+        ? 'Template ' + item.rule.note + ' → <b>' + item.rule.domain + '</b>'
         : 'Template — <b>nothing matches</b>';
       stepRule.appendChild(ruleBody);
       var ruleState = el('span', 'cas-state');
@@ -280,125 +202,87 @@
       src.appendChild(stepModel);
       main.appendChild(src);
 
-      var trackWrap = el('div');
-      var track = el('div', 'xpl-track');
-      var ok = el('div', 'xpl-track-ok');
-      var win = nluWindow(item);
-      if (win) {
-        ok.style.left = pc(win.from);
-        ok.style.width = pc(win.to - win.from);
-      } else {
-        ok.style.width = '0';
-      }
-      var dialMark = el('div', 'xpl-track-dial');
-      var dot = el('div', 'xpl-track-dot');
-      track.appendChild(ok);
-      track.appendChild(dialMark);
-      track.appendChild(dot);
       var cap = el('div', 'xpl-track-cap');
-      trackWrap.appendChild(track);
-      trackWrap.appendChild(cap);
+      main.appendChild(cap);
 
       var verdict = el('div', 'xpl-verdict');
 
       li.appendChild(main);
-      li.appendChild(trackWrap);
       li.appendChild(verdict);
       rows.appendChild(li);
 
       return {
-        item: item, dialMark: dialMark, dot: dot, cap: cap, verdict: verdict, win: win,
+        item: item, cap: cap, verdict: verdict,
         stepRule: stepRule, ruleState: ruleState, stepModel: stepModel, modelState: modelState
       };
     });
 
     /* --- render -------------------------------------------------------- */
     function render() {
-      var learned = state.mode === 'learned';
-      slider.disabled = learned;
-      btnFixed.classList.toggle('is-active', !learned);
-      btnLearned.classList.toggle('is-active', learned);
-      readout.textContent = learned ? 'per case' : state.w.toFixed(2);
+      var wiring = nluWiring(state.wiring);
+      var learned = wiring.id === 'learned';
+      var modelFirst = wiring.id === 'model';
 
-      dial.setAttribute('x1', cx(state.w));
-      dial.setAttribute('x2', cx(state.w));
-      dial.style.opacity = learned ? '0.2' : '1';
+      optRefs.forEach(function (ref) {
+        var on = ref.wiring.id === wiring.id;
+        ref.btn.classList.toggle('is-active', on);
+        ref.btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+      });
 
       var correct = 0;
       rowRefs.forEach(function (ref) {
-        var routed = learned ? nluRouteLearned(ref.item) : nluRoute(ref.item, state.w);
-        var isOk = !!routed && routed.domain === ref.item.truth;
+        var routed = wiring.route(ref.item);
+        var isOk = routed.domain === ref.item.truth;
         if (isOk) correct++;
 
-        ref.dialMark.style.display = learned ? 'none' : 'block';
-        ref.dialMark.style.left = pc(state.w);
-        ref.dot.style.display = learned ? 'block' : 'none';
-        ref.dot.style.left = pc(ref.item.learned);
-
-        /* The two stages are drawn as a gate, not a blend: in the cascade
-           exactly one of them is live, and the other is visibly switched off. */
+        /* In a cascade exactly one stage is live and the other is visibly
+           switched off; only the patent lights both and shows their shares. */
         if (learned) {
           var wRule = ref.item.rule ? ref.item.learned : 0;
           ref.stepRule.className = 'cas-step is-weighed';
           ref.stepModel.className = 'cas-step is-weighed';
-          ref.ruleState.textContent = ref.item.rule
-            ? 'weight ' + wRule.toFixed(2)
-            : 'nothing matched';
+          ref.ruleState.textContent = ref.item.rule ? 'weight ' + wRule.toFixed(2) : 'nothing matched';
           ref.modelState.textContent = 'weight ' + (1 - wRule).toFixed(2);
+          ref.cap.textContent = ref.item.rule
+            ? 'attention weighed the template evidence at ' + wRule.toFixed(2) + ' against the semantics'
+            : 'nothing in memory matched, so the semantic vector decides';
+        } else if (modelFirst) {
+          ref.stepRule.className = 'cas-step is-off';
+          ref.stepModel.className = 'cas-step is-live';
+          ref.ruleState.textContent = ref.item.rule ? 'outranked — not consulted' : 'no match';
+          ref.modelState.textContent = 'decides';
+          ref.cap.textContent = ref.item.rule && ref.item.rule.domain === ref.item.truth
+            ? 'the template had this right, and was never asked'
+            : 'the model answers, so the templates are never reached';
         } else {
-          var fires = !!ref.item.rule && ref.item.rule.score >= state.w;
+          var fires = !!ref.item.rule;
           ref.stepRule.className = 'cas-step ' + (fires ? 'is-live' : 'is-off');
           ref.stepModel.className = 'cas-step ' + (fires ? 'is-off' : 'is-live');
-          if (fires) {
-            ref.ruleState.textContent = 'clears ' + state.w.toFixed(2) + ' — decided here';
-            ref.modelState.textContent = 'never runs';
-          } else {
-            ref.ruleState.textContent = ref.item.rule
-              ? 'below ' + state.w.toFixed(2) + ' — skipped'
-              : 'no match — skipped';
-            ref.modelState.textContent = 'decides';
-          }
-        }
-
-        if (learned) {
-          ref.cap.textContent = ref.item.rule
-            ? 'attention weighted the template evidence at ' + ref.item.learned.toFixed(2)
-            : 'nothing in memory matched, so the semantic vector decides';
-        } else if (!ref.win) {
-          ref.cap.textContent = 'no threshold routes this correctly';
-        } else if (ref.win.from === 0 && ref.win.to === 1) {
-          ref.cap.textContent = 'routes correctly at any threshold';
-        } else if (ref.win.from === 0) {
-          ref.cap.textContent = 'needs the threshold at or below ' + ref.win.to.toFixed(2) + ', so the rule fires';
-        } else {
-          ref.cap.textContent = 'needs the threshold above ' + ref.win.from.toFixed(2) + ', so the rule is skipped';
+          ref.ruleState.textContent = fires ? 'matches — decided here' : 'no match';
+          ref.modelState.textContent = fires ? 'never runs' : 'decides';
+          ref.cap.textContent = fires
+            ? (isOk ? 'the template was right, and outranks the model' : 'the template matched and was wrong, and still outranks the model')
+            : 'nothing matched, so the model is reached';
         }
 
         ref.verdict.className = 'xpl-verdict ' + (isOk ? 'is-ok' : 'is-bad');
         ref.verdict.innerHTML = '<span class="vd-mark">' + (isOk ? '✓' : '✗') + '</span>→ ' +
-          (routed ? routed.domain : 'no route') +
+          routed.domain +
           '<small>' + (isOk ? 'correct' : 'should be ' + ref.item.truth) + '</small>';
       });
 
       tallyNum.textContent = correct + ' / ' + total;
       if (learned) {
-        tallyText.innerHTML = 'routed correctly — because the template evidence is weighed <b>per utterance</b> against the semantics, instead of being trusted or skipped wholesale. That is what the memory network does.';
-      } else if (correct === total - 1) {
-        tallyText.innerHTML = 'the best any single threshold can do, in a band only <b>0.16 wide</b>. The one that still breaks matched a template <b>strongly</b> and meant something else — no threshold on match strength can catch that.';
+        tallyText.innerHTML = 'routed correctly — because neither source outranks the other. The template evidence is weighed <b>per utterance</b> against the semantics, so the same system can overrule a template on one request and obey it on the next.';
+      } else if (modelFirst) {
+        tallyText.innerHTML = 'routed correctly. Demoting the templates fixes the two the rules got wrong and breaks two the rules got right — including the one where a transcription slip left the model with nothing to work from.';
       } else {
-        tallyText.innerHTML = 'routed correctly. Keep dragging: the utterances that break are the ones needing the <b>opposite</b> decision from the one this threshold just made.';
+        tallyText.innerHTML = 'routed correctly. The two failures are requests where a template matched perfectly and meant something else — and because the ordering is fixed, there is nothing to tune that would let the model overrule it.';
       }
     }
 
-    slider.addEventListener('input', function () {
-      state.w = parseInt(slider.value, 10) / 100;
-      render();
-    });
-    btnFixed.addEventListener('click', function () { state.mode = 'fixed'; render(); });
-    btnLearned.addEventListener('click', function () { state.mode = 'learned'; render(); });
-
-    mount.appendChild(curveWrap);
-    mount.appendChild(control);
+    mount.appendChild(board);
+    mount.appendChild(boardCap);
     mount.appendChild(tally);
     mount.appendChild(rows);
     render();

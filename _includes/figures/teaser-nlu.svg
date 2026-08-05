@@ -1,18 +1,29 @@
-<svg class="tzr tzr-nlu" viewBox="0 0 340 140" role="img" aria-label="A chart of how many of seven voice requests route correctly at every possible rule-match threshold. A marker sweeps across the thresholds; the line rises and falls but never reaches the dashed line marking all seven." xmlns="http://www.w3.org/2000/svg">
-  <line class="tzr-target" x1="26" y1="20" x2="326" y2="20" />
-  <text class="tzr-cap" x="21" y="23" text-anchor="end">7</text>
-  <text class="tzr-cap" x="21" y="115" text-anchor="end">0</text>
+<svg class="tzr tzr-nlu" viewBox="0 0 340 140" role="img" aria-label="Seven voice requests scored against the two possible cascade wirings. Rules first routes five of seven correctly. Model first also routes five of seven, but fails on a different pair of requests. Neither wiring reaches all seven." xmlns="http://www.w3.org/2000/svg">
+  <text class="tzr-cap" x="8" y="24">7 requests &#183; one cascade, two ways to wire it</text>
 
-  <path class="tzr-area" d="M26,46.3L164,46.3L164,33.1L212,33.1L212,46.3L290,46.3L290,59.4L296,59.4L296,46.3L326,46.3L326,112L26,112Z" />
-  <path class="tzr-line" d="M26,46.3L164,46.3L164,33.1L212,33.1L212,46.3L290,46.3L290,59.4L296,59.4L296,46.3L326,46.3" />
-
-  <line class="tzr-axis" x1="26" y1="112" x2="326" y2="112" />
-
-  <g class="tzr-sweep">
-    <line x1="26" y1="12" x2="26" y2="118" />
-    <circle cx="26" cy="12" r="3" />
+  <g class="tzr-alt-a">
+    <text class="tzr-name" x="8" y="68">Rules first</text>
+    <rect class="tzr-pip-ok" x="84" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-bad" x="112" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-ok" x="140" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-ok" x="168" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-ok" x="196" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-bad" x="224" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-ok" x="252" y="54" width="24" height="20" rx="3" />
+    <text class="tzr-score" x="332" y="69" text-anchor="end">5/7</text>
   </g>
 
-  <text class="tzr-lbl" x="26" y="132">trust every match</text>
-  <text class="tzr-lbl" x="326" y="132" text-anchor="end">trust almost none</text>
+  <g class="tzr-alt-b">
+    <text class="tzr-name" x="8" y="68">Model first</text>
+    <rect class="tzr-pip-ok" x="84" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-ok" x="112" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-bad" x="140" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-ok" x="168" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-ok" x="196" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-ok" x="224" y="54" width="24" height="20" rx="3" />
+    <rect class="tzr-pip-bad" x="252" y="54" width="24" height="20" rx="3" />
+    <text class="tzr-score" x="332" y="69" text-anchor="end">5/7</text>
+  </g>
+
+  <text class="tzr-lbl" x="8" y="116">the failures move &#8212; the total never does</text>
 </svg>

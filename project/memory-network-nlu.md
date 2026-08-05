@@ -63,11 +63,11 @@ Domain classification is the traffic controller of a voice assistant. It sits be
 
 Before this work, Tmall Genie did what the industry did: **rules first, then model**. Each product team hand-wrote matching templates for its own domain; a template match won outright, and the learned classifier only ran when nothing matched. At dozens of domains and hundreds of templates owned by different teams, every fix broke somebody else's cases, and when a request went wrong there was no way to tell whether a rule had misfired or the model had. Accuracy sat at roughly 65%.
 
-The obvious response is to tune the one knob a cascade gives you — how good a template match has to be before you trust it. Try it yourself.
+The uncomfortable part is that a cascade gives you nothing to tune. A template either matches or it does not, so the architecture offers exactly one decision — which component outranks the other — and it is taken once, in the wiring, for every request the system will ever handle. Try both orderings.
 
 {% include interactive/nlu-router.html %}
 
-The threshold cannot win, and the reason is worth stating plainly: **match strength is not match correctness**. A template can fire hard on an utterance it has completely misunderstood, and no cut-off applied to the score will separate that from a template that fired hard and was right.
+Neither ordering wins, and the reason is worth stating plainly: **a match tells you a pattern fired, not that it understood**. `周杰伦的父亲` and `周杰伦的青花瓷` are the same template on two entities that both genuinely exist — 父亲 really is a song title — and one is a request for music while the other is a question about a person. Put the rules first and the question is answered with a song. Put the model first and you lose the cases where a template is the only thing that survives a transcription slip. The requests need opposite decisions, and a fixed ordering can only make one of them.
 
 ## What the patent does differently
 
