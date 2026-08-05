@@ -1,0 +1,110 @@
+<svg class="dgm" viewBox="0 0 1000 476" role="img" aria-labelledby="asrCmpT asrCmpD" xmlns="http://www.w3.org/2000/svg">
+  <title id="asrCmpT">Three generations of personalised speech recognition compared</title>
+  <desc id="asrCmpD">First-generation hybrid ASR combines an acoustic model, an n-gram language model and a context language model through shallow fusion, which requires hand-written grammars. Google CLAS uses an encoder, decoder and bias encoder joined by multi-head attention and concatenation, trained only on decoder loss, so its use of the bias list stays implicit in the attention. The Indicator Loss design keeps an encoder, a decoder with a language model, and a bias encoder, joined by multi-head attention and ColdFusion, and adds explicit binary supervision. Only the third design keeps a language-model module, combines real-time vocabulary updates with sub-50-millisecond response and grammar-free operation, and exposes at every step whether biasing fired.</desc>
+
+  <defs>
+    <marker id="cmpArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#87867f" />
+    </marker>
+  </defs>
+
+  <text class="t-title" x="24" y="28">How the field solved this, and what changed</text>
+  <text class="t-sub" x="24" y="50">The same task — bias recognition toward a user’s own contacts, devices and content — attempted three ways.</text>
+
+  <!-- ============ COLUMN 1 ============ -->
+  <rect class="box-muted" x="16" y="76" width="312" height="44" rx="8" />
+  <text class="t-box t-mid" x="172" y="98">First-generation ASR</text>
+  <text class="t-tiny t-mid" x="172" y="113">hybrid pipeline, pre-2019</text>
+
+  <rect class="box-plain" x="32" y="136" width="86" height="42" rx="6" />
+  <text class="t-tiny t-mid" x="75" y="155">Acoustic</text>
+  <text class="t-tiny t-mid" x="75" y="168">model</text>
+  <rect class="box-plain" x="129" y="136" width="86" height="42" rx="6" />
+  <text class="t-tiny t-mid" x="172" y="155">n-gram</text>
+  <text class="t-tiny t-mid" x="172" y="168">language model</text>
+  <rect class="box-plain" x="226" y="136" width="86" height="42" rx="6" />
+  <text class="t-tiny t-mid" x="269" y="155">Context</text>
+  <text class="t-tiny t-mid" x="269" y="168">language model</text>
+
+  <path class="flow-dash" d="M75,178 V190 H172 V198" marker-end="url(#cmpArrow)" />
+  <path class="flow-dash" d="M269,178 V190 H172 V198" marker-end="url(#cmpArrow)" />
+
+  <rect class="box" x="62" y="200" width="220" height="38" rx="8" />
+  <text class="t-box t-mid" x="172" y="224">Shallow fusion</text>
+  <line class="flow-dash" x1="172" y1="238" x2="172" y2="254" marker-end="url(#cmpArrow)" />
+  <rect class="box" x="62" y="258" width="220" height="38" rx="8" />
+  <text class="t-box t-mid" x="172" y="282">Transcript</text>
+
+  <text class="t-tiny t-mid" x="172" y="314">Not end-to-end. Every new phrase needs a</text>
+  <text class="t-tiny t-mid" x="172" y="328">hand-written grammar and a language-model</text>
+  <text class="t-tiny t-mid" x="172" y="342">retrain measured in weeks.</text>
+
+  <!-- ============ COLUMN 2 ============ -->
+  <rect class="box-muted" x="344" y="76" width="312" height="44" rx="8" />
+  <text class="t-box t-mid" x="500" y="98">Google CLAS</text>
+  <text class="t-tiny t-mid" x="500" y="113">the industry benchmark</text>
+
+  <rect class="box-plain" x="360" y="136" width="86" height="42" rx="6" />
+  <text class="t-tiny t-mid" x="403" y="162">Encoder</text>
+  <rect class="box-plain" x="457" y="136" width="86" height="42" rx="6" />
+  <text class="t-tiny t-mid" x="500" y="162">Decoder</text>
+  <rect class="box-plain" x="554" y="136" width="86" height="42" rx="6" />
+  <text class="t-tiny t-mid" x="597" y="155">Bias encoder</text>
+  <text class="t-tiny t-mid" x="597" y="168">key phrases</text>
+
+  <path class="flow-dash" d="M403,178 V190 H500 V198" marker-end="url(#cmpArrow)" />
+  <path class="flow-dash" d="M597,178 V190 H500 V198" marker-end="url(#cmpArrow)" />
+
+  <rect class="box" x="390" y="200" width="220" height="38" rx="8" />
+  <text class="t-box t-mid" x="500" y="224">Multi-head attention</text>
+  <line class="flow-dash" x1="500" y1="238" x2="500" y2="254" marker-end="url(#cmpArrow)" />
+  <rect class="box" x="390" y="258" width="220" height="38" rx="8" />
+  <text class="t-box t-mid" x="500" y="282">Concat → transcript</text>
+
+  <text class="t-tiny t-mid" x="500" y="314">End-to-end, but the only training signal is the</text>
+  <text class="t-tiny t-mid" x="500" y="328">final transcript. Attention shows where the model</text>
+  <text class="t-tiny t-mid" x="500" y="342">looked, never whether it decided. No LM module.</text>
+
+  <!-- ============ COLUMN 3 ============ -->
+  <rect class="box-accent" x="672" y="76" width="312" height="44" rx="8" />
+  <text class="t-box t-mid" x="828" y="98">Indicator Loss</text>
+  <text class="t-tiny t-mid t-accent" x="828" y="113">deployed on Tmall Genie, 2019–2020</text>
+
+  <rect class="box-plain" x="688" y="136" width="86" height="42" rx="6" />
+  <text class="t-tiny t-mid" x="731" y="162">Encoder</text>
+  <rect class="box-plain" x="785" y="136" width="86" height="42" rx="6" />
+  <text class="t-tiny t-mid" x="828" y="155">Decoder</text>
+  <text class="t-tiny t-mid" x="828" y="168">+ language model</text>
+  <rect class="box-plain" x="882" y="136" width="86" height="42" rx="6" />
+  <text class="t-tiny t-mid" x="925" y="155">Bias encoder</text>
+  <text class="t-tiny t-mid" x="925" y="168">key phrases</text>
+
+  <path class="flow-accent" d="M731,178 V190 H828 V198" marker-end="url(#cmpArrow)" />
+  <path class="flow-accent" d="M925,178 V190 H828 V198" marker-end="url(#cmpArrow)" />
+
+  <rect class="box" x="718" y="200" width="220" height="38" rx="8" />
+  <text class="t-box t-mid" x="828" y="224">Multi-head attention</text>
+  <line class="flow-accent" x1="828" y1="238" x2="828" y2="254" marker-end="url(#cmpArrow)" />
+  <rect class="box-dark" x="718" y="258" width="220" height="38" rx="8" />
+  <text class="t-box t-mid t-invert" x="828" y="282">ColdFusion → transcript</text>
+
+  <text class="t-tiny t-mid t-accent t-bold" x="828" y="314">Plus a supervised binary target at every step,</text>
+  <text class="t-tiny t-mid t-accent t-bold" x="828" y="328">for every phrase on the list — so biasing is</text>
+  <text class="t-tiny t-mid t-accent t-bold" x="828" y="342">an explicit, inspectable decision.</text>
+
+  <!-- ============ what only the third design does ============ -->
+  <rect class="box" x="16" y="366" width="968" height="98" rx="10" />
+  <text class="t-tiny t-bold t-accent" x="40" y="390">WHAT ONLY THE THIRD DESIGN DOES</text>
+
+  <text class="t-tiny" x="40" y="414">Keeps a language-model module.</text>
+  <text class="t-tiny" x="40" y="428">CLAS has none, so it cannot draw on</text>
+  <text class="t-tiny" x="40" y="442">linguistic context while decoding.</text>
+
+  <text class="t-tiny" x="360" y="414">Was the only design in the head-to-head</text>
+  <text class="t-tiny" x="360" y="428">to combine real-time vocabulary updates,</text>
+  <text class="t-tiny" x="360" y="442">sub-50 ms response and grammar-free operation.</text>
+
+  <text class="t-tiny" x="700" y="414">Exposes, at every step, whether biasing</text>
+  <text class="t-tiny" x="700" y="428">fired — so a bad transcript can be traced</text>
+  <text class="t-tiny" x="700" y="442">to a cause instead of guessed at.</text>
+</svg>

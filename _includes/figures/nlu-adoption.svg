@@ -1,0 +1,37 @@
+<svg class="dgm" viewBox="0 0 1000 370" role="img" aria-labelledby="nluAdT nluAdD" xmlns="http://www.w3.org/2000/svg">
+  <title id="nluAdT">Patent CN112002313B cited as prior art in unrelated industries</title>
+  <desc id="nluAdD">The granted patent CN112002313B, filed May 2019 and granted April 2023 with Zihao Zheng as first inventor, has been cited as prior art by Ping An Life Insurance in a financial-services question-identification filing, and by Tianjin University in a power-transformer load-forecasting filing. Both citations were entered by government patent examiners rather than disclosed by the inventor.</desc>
+
+  <defs>
+    <marker id="adArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#d97757" />
+    </marker>
+  </defs>
+
+  <text class="t-title" x="24" y="28">Cited as prior art in industries with nothing to do with voice assistants</text>
+  <text class="t-sub" x="24" y="50">Both citations were entered by government patent examiners searching for relevant prior art — not disclosed by the inventor.</text>
+
+  <rect class="box-dark" x="40" y="110" width="300" height="140" rx="12" />
+  <text class="t-tiny t-bold t-invert" x="64" y="140">GRANTED PATENT · FIRST INVENTOR</text>
+  <text class="t-code-lg t-invert" x="64" y="170">CN112002313B</text>
+  <text class="t-small t-invert" x="64" y="194">Interaction Method, Apparatus,</text>
+  <text class="t-small t-invert" x="64" y="210">Speaker and Electronic Device</text>
+  <text class="t-tiny" x="64" y="232" fill="#cccccc">Filed 9 May 2019 · Granted 7 Apr 2023 · Alibaba Group</text>
+
+  <path class="flow-accent" d="M340,180 C 386,180 392,150 434,150" marker-end="url(#adArrow)" />
+  <path class="flow-accent" d="M340,180 C 386,180 392,246 434,246" marker-end="url(#adArrow)" />
+  <text class="t-tiny t-accent t-bold" x="350" y="142">cited by</text>
+
+  <rect class="box" x="440" y="106" width="536" height="88" rx="10" />
+  <text class="t-tiny t-bold t-accent" x="462" y="130">INSURANCE &amp; FINANCIAL SERVICES</text>
+  <text class="t-lead" x="462" y="154">Ping An Life Insurance</text>
+  <text class="t-small" x="462" y="176">Fortune Global 500 · CN112559687B, question identification for advisory</text>
+
+  <rect class="box" x="440" y="202" width="536" height="88" rx="10" />
+  <text class="t-tiny t-bold t-accent" x="462" y="226">ENERGY &amp; POWER SYSTEMS</text>
+  <text class="t-lead" x="462" y="250">Tianjin University</text>
+  <text class="t-small" x="462" y="272">CN114036823B, power-transformer load forecasting</text>
+
+  <line class="rule" x1="40" y1="312" x2="976" y2="312" />
+  <text class="t-small" x="40" y="336">Insurance advisory and power-grid forecasting share no product surface with a smart speaker. When examiners in both fields land on the same architecture, the contribution is general — not a product-specific optimisation.</text>
+</svg>

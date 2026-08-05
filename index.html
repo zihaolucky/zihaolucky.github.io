@@ -25,17 +25,17 @@ description: AI infrastructure and speech-language systems architect — patents
             {% endif %}
         </div>
         <div class="hero-stats">
-            <div class="stat">
+            <a class="stat stat-link" href="#selected-work">
                 <span class="stat-number">2</span>
                 <span class="stat-label">Granted patents, first inventor</span>
-            </div>
+            </a>
             <div class="stat">
                 <span class="stat-number">~10</span>
                 <span class="stat-label">Years building production AI</span>
             </div>
             <div class="stat">
                 <span class="stat-number">40M+</span>
-                <span class="stat-label">Households served by my systems</span>
+                <span class="stat-label">Households on Tmall Genie by 2023</span>
             </div>
         </div>
     </div>
@@ -71,41 +71,70 @@ description: AI infrastructure and speech-language systems architect — patents
     </div>
 </section>
 
-<section class="section">
+<section class="section" id="selected-work">
     <div class="container">
         <div class="section-header">
             <h2 class="section-title">Selected work</h2>
+            <a class="section-link" href="{{ site.baseurl }}/project/">All projects →</a>
         </div>
-        <div class="card-grid">
-            <a class="card card-link" href="{{ site.baseurl }}/project/standalone-tensorboard/">
-                <h3>Standalone TensorBoard</h3>
-                <p>
-                    Primary author of <code>dmlc/tensorboard</code>. Decoupled TensorBoard from
-                    TensorFlow so MXNet and PyTorch teams could inspect training without
-                    framework lock-in. Adopted by AWS as the basis for <code>mxboard</code>;
-                    referenced by PyTorch's <code>tensorboardX</code>.
-                </p>
-                <div class="card-meta">Open Source · ML Infrastructure</div>
+
+        <p class="section-lede">
+            Two granted patents running on Tmall Genie at national scale, and the open-source
+            infrastructure that came before them. Every page carries a working model of the idea
+            you can operate yourself — no video, no slides, just the mechanism.
+        </p>
+
+        <div class="feature-grid">
+            <a class="feature-card" href="{{ site.baseurl }}/project/memory-network-nlu/">
+                <div class="feature-visual">{% include figures/teaser-nlu.svg %}</div>
+                <div class="feature-body">
+                    <p class="feature-kicker">Patent CN112002313B · Interactive</p>
+                    <h3>Memory-Network NLU</h3>
+                    <p class="feature-hook">
+                        <b>Find one threshold that routes all seven requests correctly.</b>
+                        You can't — and that impossibility is the patent.
+                    </p>
+                    <div class="feature-metrics">
+                        <span>~65% → ~85% accuracy</span>
+                        <span>15.61M units shipped, 2019</span>
+                    </div>
+                    <span class="feature-cta">Tune the cascade</span>
+                </div>
             </a>
-            <a class="card card-link" href="{{ site.baseurl }}/project/indicator-loss-asr/">
-                <h3>Indicator Loss for Context-Aware ASR</h3>
-                <p>
-                    First inventor on patent CN113808593B. Explicit, step-level supervised
-                    gating for personalized speech recognition — deployed on Tmall Genie at
-                    national scale, enabling real-time bias-list updates without weeks-long
-                    retraining.
-                </p>
-                <div class="card-meta">Patent · Speech Recognition</div>
+
+            <a class="feature-card" href="{{ site.baseurl }}/project/indicator-loss-asr/">
+                <div class="feature-visual">{% include figures/teaser-asr.svg %}</div>
+                <div class="feature-body">
+                    <p class="feature-kicker">Patent CN113808593B · Interactive</p>
+                    <h3>Indicator Loss for Context-Aware ASR</h3>
+                    <p class="feature-hook">
+                        <b>Delete one contact and watch the transcript break.</b>
+                        Same sounds, valid words, wrong meaning — fixable without retraining.
+                    </p>
+                    <div class="feature-metrics">
+                        <span>−32.9% negative feedback</span>
+                        <span>In Alibaba Cloud materials, 2023</span>
+                    </div>
+                    <span class="feature-cta">Edit the bias list</span>
+                </div>
             </a>
-            <a class="card card-link" href="{{ site.baseurl }}/project/memory-network-nlu/">
-                <h3>Memory-Network NLU for Tmall Genie</h3>
-                <p>
-                    First inventor on patent CN112002313B. Replaced brittle rule-template
-                    routing with a memory-network architecture fusing rules and learned
-                    representations, raising production domain-classification accuracy from
-                    ~65% to ~85%.
-                </p>
-                <div class="card-meta">Patent · Voice Assistants</div>
+
+            <a class="feature-card" href="{{ site.baseurl }}/project/standalone-tensorboard/">
+                <div class="feature-visual">{% include figures/teaser-tensorboard.svg %}</div>
+                <div class="feature-body">
+                    <p class="feature-kicker">Open source · ML infrastructure · Interactive</p>
+                    <h3>Standalone TensorBoard</h3>
+                    <p class="feature-hook">
+                        <b>Why should seeing your own training run cost you a second framework?</b>
+                        I rebuilt TensorBoard as a standalone logging and rendering tool.
+                        Google's own now ships the same way.
+                    </p>
+                    <div class="feature-metrics">
+                        <span>Top 3% of ML-visualisation repos</span>
+                        <span>tensorboardX: 5.9M downloads/mo</span>
+                    </div>
+                    <span class="feature-cta">Try the install →</span>
+                </div>
             </a>
         </div>
     </div>

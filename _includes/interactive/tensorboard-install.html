@@ -1,0 +1,23 @@
+<div class="xpl" data-explorable="tensorboard-install">
+  <p class="xpl-kicker">Interactive — pick a framework, try to see your training run</p>
+  <h3 class="xpl-title">The same log file. Whether you can open it depends on what you trained with.</h3>
+  <p class="xpl-intro">
+    Writing a valid TensorBoard event file was the half with precedents. The question is what you must
+    install to render it. Switch the standalone tool off to see the world as it was in 2016, then switch it
+    on.
+  </p>
+  <div data-role="mount">
+    <p class="xpl-fallback">
+      This interactive needs JavaScript. In short: before this project, rendering a TensorBoard event file
+      required a full TensorFlow installation, so MXNet and PyTorch users had to install a rival framework
+      to look at their own training runs. Packaging a logging interface and the renderer together as one
+      standalone tool removed that dependency, and TensorBoard has shipped without a TensorFlow requirement
+      ever since.
+    </p>
+  </div>
+  <p class="xpl-note">
+    The chart is illustrative; the dependency is not. The renderer was a web application that could only be
+    obtained by installing the machine-learning framework it happened to ship inside — which is why the fix
+    had to be a separate package rather than a feature request.
+  </p>
+</div>

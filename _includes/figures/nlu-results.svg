@@ -1,0 +1,66 @@
+<svg class="dgm" viewBox="0 0 1000 478" role="img" aria-labelledby="nluResT nluResD" xmlns="http://www.w3.org/2000/svg">
+  <title id="nluResT">Domain-classification accuracy before and after the memory-network architecture</title>
+  <desc id="nluResD">A bar chart of live production accuracy. Rule-and-template routing reached about 65 percent. After the memory-network fusion architecture was deployed, overall accuracy reached about 85 percent, and 98.89 percent on the subset where speech transcription was correct. Three mechanisms contributed: memory-network fusion cut domain-classification errors by 35 percent; open-set detection raised F-score from 0.91 to 0.95; the unclear-expression model improved recall 7.2 times at 94 percent precision and lifted overall success by 3.7 percent.</desc>
+
+  <text class="t-title" x="24" y="28">Live domain-classification accuracy</text>
+  <text class="t-sub" x="24" y="50">Live domain-classification accuracy on Tmall Genie, before and after deployment (mid-2018 to mid-2019).</text>
+
+  <!-- grid -->
+  <line class="rule" x1="90" y1="90" x2="520" y2="90" />
+  <line class="rule" x1="90" y1="150" x2="520" y2="150" />
+  <line class="rule" x1="90" y1="210" x2="520" y2="210" />
+  <line class="rule" x1="90" y1="270" x2="520" y2="270" />
+  <line class="rule" x1="90" y1="330" x2="520" y2="330" stroke="#87867f" />
+
+  <text class="t-tiny t-end" x="80" y="94">100%</text>
+  <text class="t-tiny t-end" x="80" y="154">75%</text>
+  <text class="t-tiny t-end" x="80" y="214">50%</text>
+  <text class="t-tiny t-end" x="80" y="274">25%</text>
+  <text class="t-tiny t-end" x="80" y="334">0</text>
+
+  <!-- bars -->
+  <rect class="bar-old" x="120" y="174" width="90" height="156" rx="4" />
+  <text class="t-big t-mid" x="165" y="166">65%</text>
+  <text class="t-small t-mid" x="165" y="352">Before</text>
+  <text class="t-tiny t-mid" x="165" y="367">rules + templates</text>
+
+  <rect class="bar-new" x="260" y="126" width="90" height="204" rx="4" />
+  <text class="t-big t-mid" x="305" y="118">85%</text>
+  <text class="t-small t-mid" x="305" y="352">After</text>
+  <text class="t-tiny t-mid" x="305" y="367">memory-network fusion</text>
+
+  <rect class="bar-mid" x="400" y="93" width="90" height="237" rx="4" />
+  <text class="t-big t-mid" x="445" y="85">98.89%</text>
+  <text class="t-small t-mid" x="445" y="352">After</text>
+  <text class="t-tiny t-mid" x="445" y="367">when transcription is correct</text>
+
+  <text class="t-tiny" x="90" y="398">Below roughly 65% accuracy the product could not scale commercially — one in three commands went to the wrong service.</text>
+  <text class="t-tiny" x="90" y="413">Above 85%, Tmall Genie shipped 15.61 million units in China in 2019 and became the country’s number-one smart speaker.</text>
+
+  <!-- ============ RIGHT: contributing mechanisms ============ -->
+  <line class="rule" x1="552" y1="70" x2="552" y2="420" />
+
+  <text class="t-title" x="580" y="96">Where the gain came from</text>
+
+  <rect class="box" x="580" y="112" width="396" height="88" rx="10" />
+  <text class="t-tiny t-bold" x="600" y="136">MEMORY-NETWORK FUSION · PATENTED CORE</text>
+  <text class="t-big" x="600" y="168">35%</text>
+  <text class="t-small" x="672" y="168">fewer domain-classification errors</text>
+  <text class="t-tiny" x="600" y="186">Rules and the model are weighted by learned attention, not chained.</text>
+
+  <rect class="box" x="580" y="212" width="396" height="88" rx="10" />
+  <text class="t-tiny t-bold" x="600" y="236">OPEN-SET DETECTION</text>
+  <text class="t-big" x="600" y="268">0.91 → 0.95</text>
+  <text class="t-small" x="770" y="268">F-score</text>
+  <text class="t-tiny" x="600" y="286">Unsupported requests are declined instead of misrouted.</text>
+
+  <rect class="box" x="580" y="312" width="396" height="88" rx="10" />
+  <text class="t-tiny t-bold" x="600" y="336">UNCLEAR-EXPRESSION MODEL</text>
+  <text class="t-big" x="600" y="368">7.2×</text>
+  <text class="t-small" x="668" y="368">recall, at 94% precision · +3.7% success</text>
+  <text class="t-tiny" x="600" y="386">Raw acoustic features catch plausible-looking text from meaningless speech.</text>
+
+  <line class="rule" x1="24" y1="422" x2="976" y2="422" />
+  <text class="t-small" x="24" y="444">Below roughly 65% accuracy the product could not scale commercially &#8212; one command in three went to the wrong service.</text>
+  <text class="t-small" x="24" y="462">Above 85%, Tmall Genie shipped 15.61 million units in China in 2019 and became the country&#8217;s number-one smart speaker.</text>
+</svg>

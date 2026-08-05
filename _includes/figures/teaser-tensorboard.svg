@@ -1,0 +1,32 @@
+<svg class="tzr tzr-tb" viewBox="0 0 340 140" role="img" aria-label="To view an MXNet training run in 2016 you had to install TensorFlow as well, and without it the viewer was unavailable. With the standalone viewer installed instead, the loss curve renders and no rival framework is required." xmlns="http://www.w3.org/2000/svg">
+  <text class="tzr-lbl" x="16" y="14">to see your own MXNet training run</text>
+
+  <rect class="tzr-node" x="16" y="22" width="146" height="28" rx="7" />
+  <text class="tzr-mono" x="27" y="40">mxnet</text>
+
+  <!-- phase A: the 2016 world -->
+  <g class="tzr-a">
+    <rect class="tzr-node tzr-node-heavy" x="16" y="56" width="146" height="28" rx="7" />
+    <text class="tzr-mono tzr-mono-heavy" x="27" y="74">tensorflow</text>
+
+    <rect class="tzr-viewer-off" x="176" y="22" width="148" height="62" rx="7" />
+    <text class="tzr-note tzr-heavy-note" x="250" y="52" text-anchor="middle">no viewer</text>
+    <text class="tzr-lbl tzr-heavy-note" x="250" y="66" text-anchor="middle">log written, unreadable</text>
+
+    <text class="tzr-note tzr-heavy-note" x="16" y="108">install the framework you didn&#8217;t choose</text>
+  </g>
+
+  <!-- phase B: the standalone viewer -->
+  <g class="tzr-b">
+    <rect class="tzr-node tzr-node-good" x="16" y="56" width="146" height="28" rx="7" />
+    <text class="tzr-mono" x="27" y="74">tensorboard</text>
+
+    <rect class="tzr-viewer" x="176" y="22" width="148" height="62" rx="7" />
+    <path class="tzr-axis" d="M186,32 V74 H314" />
+    <path class="tzr-line" d="M186,36 L202,47 L218,58 L234,60 L250,67 L266,68 L282,71 L298,70.5 L314,72" />
+
+    <text class="tzr-note" x="16" y="108">charts, with no framework attached</text>
+  </g>
+
+  <text class="tzr-lbl" x="16" y="128">dmlc/tensorboard &#8212; primary author</text>
+</svg>

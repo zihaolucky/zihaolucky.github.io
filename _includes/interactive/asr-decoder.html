@@ -1,0 +1,23 @@
+<div class="xpl" data-explorable="asr-decoder">
+  <p class="xpl-kicker">Interactive — edit the list, watch the transcript</p>
+  <h3 class="xpl-title">Personalisation you can switch on and off, one step at a time</h3>
+  <p class="xpl-intro">
+    Speech recognition decodes one character at a time. Indicator Loss adds a supervised yes/no target at
+    every step, for every phrase on the user's personal list — contacts, device names, things they have
+    played before. Tick an entry off below and watch the transcript degrade into a valid-looking phrase that
+    means something else entirely. Tick it back on and it recovers. Nothing is retrained in between.
+  </p>
+  <div data-role="mount">
+    <p class="xpl-fallback">
+      This interactive needs JavaScript. In short: each entry on a user's personalisation list carries a
+      per-step binary target telling the decoder exactly when that phrase is in play. Removing an entry
+      changes the transcript immediately, with no model retraining; and because the targets are explicit,
+      an operator can see whether biasing fired rather than inferring it from the output.
+    </p>
+  </div>
+  <p class="xpl-note">
+    The three scenarios are drawn from documented Tmall Genie failure modes. The syllables are identical in
+    each pair — only the characters differ, which is why the failures are invisible to ordinary monitoring:
+    the system returns fluent, grammatical text that happens to be the wrong text.
+  </p>
+</div>

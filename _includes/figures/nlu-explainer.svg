@@ -1,0 +1,81 @@
+<svg class="dgm" viewBox="0 0 1000 348" role="img" aria-labelledby="nluExpT nluExpD" xmlns="http://www.w3.org/2000/svg">
+  <title id="nluExpT">How a Tmall Genie voice command is handled</title>
+  <desc id="nluExpD">A five-stage pipeline. The user speaks; speech recognition turns audio into text; domain classification decides which service should handle the request; the chosen skill runs; the device acts. Domain classification must pick between music, smart home, shopping, weather, question answering, and an "not supported" bucket. A wrong choice cannot be recovered downstream.</desc>
+
+  <defs>
+    <marker id="nluArrow" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#5e5d59" />
+    </marker>
+  </defs>
+
+  <text class="t-title" x="24" y="28">One voice command, five stages</text>
+  <text class="t-sub" x="24" y="50">Domain classification is the traffic controller: it decides which service answers. Everything after it depends on that one call.</text>
+
+  <!-- Stage 1 -->
+  <g class="anim-stage-1">
+    <rect class="box-plain" x="24" y="88" width="160" height="64" rx="8" />
+    <text class="t-box t-mid" x="104" y="113">User speaks</text>
+    <text class="t-tiny t-mid" x="104" y="131">“play something by Jay Chou”</text>
+  </g>
+  <line class="flow" x1="186" y1="120" x2="210" y2="120" marker-end="url(#nluArrow)" />
+
+  <!-- Stage 2 -->
+  <g class="anim-stage-2">
+    <rect class="box-plain" x="214" y="88" width="160" height="64" rx="8" />
+    <text class="t-box t-mid" x="294" y="113">Speech recognition</text>
+    <text class="t-tiny t-mid" x="294" y="131">audio → text</text>
+  </g>
+  <line class="flow" x1="376" y1="120" x2="400" y2="120" marker-end="url(#nluArrow)" />
+
+  <!-- Stage 3 — the patented layer -->
+  <g class="anim-stage-3">
+    <rect class="box-accent" x="404" y="82" width="160" height="76" rx="8" />
+    <text class="t-box t-mid" x="484" y="107">Domain classification</text>
+    <text class="t-tiny t-mid" x="484" y="124">which service handles this?</text>
+    <text class="t-tiny t-mid t-accent t-bold" x="484" y="142">PATENT CN112002313B</text>
+  </g>
+  <line class="flow" x1="566" y1="120" x2="590" y2="120" marker-end="url(#nluArrow)" />
+
+  <!-- Stage 4 -->
+  <g class="anim-stage-4">
+    <rect class="box-plain" x="594" y="88" width="160" height="64" rx="8" />
+    <text class="t-box t-mid" x="674" y="113">Skill runs</text>
+    <text class="t-tiny t-mid" x="674" y="131">music service queries catalogue</text>
+  </g>
+  <line class="flow" x1="756" y1="120" x2="780" y2="120" marker-end="url(#nluArrow)" />
+
+  <!-- Stage 5 -->
+  <g class="anim-stage-5">
+    <rect class="box-dark" x="784" y="88" width="160" height="64" rx="8" />
+    <text class="t-box t-mid t-invert" x="864" y="113">Device acts</text>
+    <text class="t-tiny t-mid" x="864" y="131" fill="#cccccc">the song starts playing</text>
+  </g>
+
+  <!-- Fan-out bus -->
+  <g class="anim-stage-6">
+    <path class="flow-accent" d="M484,160 V196" />
+    <path class="flow-accent" d="M120,196 H880" />
+    <path class="flow-dash" d="M120,196 V240" />
+    <path class="flow-dash" d="M272,196 V240" />
+    <path class="flow-dash" d="M424,196 V240" />
+    <path class="flow-dash" d="M576,196 V240" />
+    <path class="flow-dash" d="M728,196 V240" />
+    <path class="flow-dash" d="M880,196 V240" />
+
+    <rect class="box" x="50" y="240" width="140" height="34" rx="6" />
+    <text class="t-small t-mid" x="120" y="262">Music</text>
+    <rect class="box" x="202" y="240" width="140" height="34" rx="6" />
+    <text class="t-small t-mid" x="272" y="262">Smart home</text>
+    <rect class="box" x="354" y="240" width="140" height="34" rx="6" />
+    <text class="t-small t-mid" x="424" y="262">Shopping</text>
+    <rect class="box" x="506" y="240" width="140" height="34" rx="6" />
+    <text class="t-small t-mid" x="576" y="262">Weather</text>
+    <rect class="box" x="658" y="240" width="140" height="34" rx="6" />
+    <text class="t-small t-mid" x="728" y="262">Question answering</text>
+    <rect class="box-muted" x="810" y="240" width="140" height="34" rx="6" stroke-dasharray="4 3" />
+    <text class="t-small t-mid" x="880" y="262">Not supported</text>
+  </g>
+
+  <line class="rule" x1="24" y1="300" x2="976" y2="300" />
+  <text class="t-small" x="24" y="322"><tspan class="t-accent t-bold">The hard part:</tspan> a wrong route produces a confidently wrong action. No later stage can detect or repair it — the user simply gets the wrong thing.</text>
+</svg>
