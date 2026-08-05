@@ -23,6 +23,9 @@ highlighter: rouge
 permalink: /:title
 feed: /atom.xml
 
+newsletter:
+  buttondown: "zihaolucky"
+
 exclude:
   - README.md
   - drafts

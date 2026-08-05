@@ -51,6 +51,9 @@
                 {% if site.author.email and site.author.email != "" %}
                 <a href="mailto:{{ site.author.email }}" aria-label="Email">Email</a>
                 {% endif %}
+                {% if site.feed %}
+                <a href="{{ site.baseurl }}{{ site.feed }}" aria-label="RSS feed">RSS</a>
+                {% endif %}
             </div>
             <p class="footer-copy">&copy; {{ site.time | date: "%Y" }} {{ site.author.name }}. All rights reserved.</p>
         </div>

@@ -1,0 +1,18 @@
+<svg class="tzr tzr-nlu" viewBox="0 0 340 140" role="img" aria-label="A chart of how many of seven voice requests route correctly at every possible rule-match threshold. A marker sweeps across the thresholds; the line rises and falls but never reaches the dashed line marking all seven." xmlns="http://www.w3.org/2000/svg">
+  <line class="tzr-target" x1="26" y1="20" x2="326" y2="20" />
+  <text class="tzr-cap" x="21" y="23" text-anchor="end">7</text>
+  <text class="tzr-cap" x="21" y="115" text-anchor="end">0</text>
+
+  <path class="tzr-area" d="M26,46.3L164,46.3L164,33.1L212,33.1L212,46.3L290,46.3L290,59.4L296,59.4L296,46.3L326,46.3L326,112L26,112Z" />
+  <path class="tzr-line" d="M26,46.3L164,46.3L164,33.1L212,33.1L212,46.3L290,46.3L290,59.4L296,59.4L296,46.3L326,46.3" />
+
+  <line class="tzr-axis" x1="26" y1="112" x2="326" y2="112" />
+
+  <g class="tzr-sweep">
+    <line x1="26" y1="12" x2="26" y2="118" />
+    <circle cx="26" cy="12" r="3" />
+  </g>
+
+  <text class="tzr-lbl" x="26" y="132">trust every match</text>
+  <text class="tzr-lbl" x="326" y="132" text-anchor="end">trust almost none</text>
+</svg>

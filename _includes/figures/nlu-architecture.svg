@@ -1,0 +1,71 @@
+<svg class="dgm" viewBox="0 0 1000 330" role="img" aria-labelledby="nluArchT nluArchD" xmlns="http://www.w3.org/2000/svg">
+  <title id="nluArchT">The memory-network domain classifier</title>
+  <desc id="nluArchD">An utterance is processed in parallel by two branches. A neural domain-classification model produces a semantic vector. Rule and template matching produces an addressable rule memory with a bias term. Multi-head attention, queried by the semantic vector, reads the rule memory and produces a memory vector. The semantic and memory vectors are fused and passed through a dense softmax layer, which outputs a domain, a confidence, and the attention weights that produced them.</desc>
+
+  <defs>
+    <marker id="naA" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#5e5d59" />
+    </marker>
+    <marker id="naB" viewBox="0 0 8 8" refX="7" refY="4" markerWidth="7" markerHeight="7" orient="auto">
+      <path d="M0,0 L8,4 L0,8 z" fill="#87867f" />
+    </marker>
+  </defs>
+
+  <text class="t-title" x="16" y="26">The architecture the patent describes</text>
+  <text class="t-sub" x="16" y="46">Two branches, joined by attention rather than chained &#8212; which is what makes the weighting learnable and the decision inspectable.</text>
+
+  <rect class="box-plain" x="16" y="136" width="110" height="50" rx="8" />
+  <text class="t-box t-mid" x="71" y="166">Utterance</text>
+
+  <path class="flow" d="M126,161 H146 V81 H162" marker-end="url(#naA)" />
+  <path class="flow" d="M126,161 H146 V241 H162" marker-end="url(#naA)" />
+
+  <rect class="box-plain" x="166" y="56" width="140" height="50" rx="8" />
+  <text class="t-box t-mid" x="236" y="80">Neural DC model</text>
+  <text class="t-tiny t-mid" x="236" y="95">learned from data</text>
+
+  <rect class="box-plain" x="166" y="216" width="140" height="50" rx="8" />
+  <text class="t-box t-mid" x="236" y="240">Rule / template</text>
+  <text class="t-tiny t-mid" x="236" y="255">written by product teams</text>
+
+  <line class="flow" x1="306" y1="81" x2="342" y2="81" marker-end="url(#naA)" />
+  <line class="flow" x1="306" y1="241" x2="342" y2="241" marker-end="url(#naA)" />
+
+  <rect class="box" x="346" y="56" width="140" height="50" rx="8" />
+  <text class="t-box t-mid" x="416" y="80">Semantic vector</text>
+  <text class="t-tiny t-mid" x="416" y="95">v_semantic</text>
+
+  <rect class="box" x="346" y="216" width="140" height="50" rx="8" />
+  <text class="t-box t-mid" x="416" y="240">Rule memory</text>
+  <text class="t-tiny t-mid" x="416" y="255">addressable, with bias term</text>
+
+  <line class="flow" x1="486" y1="241" x2="522" y2="241" marker-end="url(#naA)" />
+
+  <path class="flow-dash" d="M416,106 V196 H580 V212" marker-end="url(#naB)" />
+  <text class="t-tiny" x="424" y="190">queries the memory</text>
+
+  <rect class="box-accent" x="526" y="216" width="160" height="50" rx="8" />
+  <text class="t-box t-mid" x="606" y="240">Multi-head attention</text>
+  <text class="t-tiny t-mid t-accent" x="606" y="255">weights are logged</text>
+
+  <path class="flow-accent" d="M686,241 H700 V171 H722" marker-end="url(#naA)" />
+  <path class="flow" d="M486,81 H712 V151 H722" marker-end="url(#naA)" />
+  <text class="t-tiny t-accent t-mid" x="606" y="282">v_mem</text>
+
+  <rect class="box" x="726" y="136" width="100" height="50" rx="8" />
+  <text class="t-box t-mid" x="776" y="166">Fuse</text>
+
+  <line class="flow" x1="826" y1="161" x2="862" y2="161" marker-end="url(#naA)" />
+
+  <rect class="box-dark" x="866" y="136" width="118" height="50" rx="8" />
+  <text class="t-box t-mid t-invert" x="925" y="160">Dense +</text>
+  <text class="t-box t-mid t-invert" x="925" y="176">softmax</text>
+
+  <line class="flow" x1="925" y1="186" x2="925" y2="204" marker-end="url(#naA)" />
+  <text class="t-tiny t-mid t-bold" x="925" y="222">Domain</text>
+  <text class="t-tiny t-mid" x="925" y="236">confidence</text>
+  <text class="t-tiny t-mid" x="925" y="250">attention weights</text>
+
+  <line class="rule" x1="16" y1="292" x2="984" y2="292" />
+  <text class="t-small" x="16" y="314">The rule branch is never discarded and never blindly obeyed. Attention decides, per utterance, how far to trust it &#8212; and records that decision.</text>
+</svg>

@@ -9,6 +9,8 @@ description: Writing and notes by Zihao Zheng
     <h1>Blog</h1>
     <p class="lead">Essays, technical notes, and project write-ups.</p>
 
+    {% include subscribe.html %}
+
     <ul class="post-list">
     {% for post in site.posts %}
         {% unless post.path contains "template" or post.translation %}

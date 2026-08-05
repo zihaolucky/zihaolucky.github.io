@@ -1,0 +1,44 @@
+<svg class="tzr tzr-asr" viewBox="0 0 340 140" role="img" aria-label="A personalisation list entry for the contact Zheng Zihao switches on and off. When it is on the speech recogniser transcribes the name correctly; when it is off the last three characters change to homophones that are not a name." xmlns="http://www.w3.org/2000/svg">
+  <text class="tzr-lbl" x="24" y="14">the user&#8217;s list</text>
+
+  <rect class="tzr-chip" x="24" y="20" width="124" height="30" rx="7" />
+  <rect class="tzr-boxoff" x="34" y="28" width="13" height="13" rx="3" />
+  <g class="tzr-on">
+    <rect class="tzr-boxon" x="34" y="28" width="13" height="13" rx="3" />
+    <path class="tzr-tick" d="M37.3,34.6 L40.1,37.4 L44.2,31.8" />
+  </g>
+  <text class="tzr-cjk-sm" x="55" y="39">&#37073;&#26771;&#35946;</text>
+
+  <text class="tzr-lbl" x="24" y="66">transcript</text>
+
+  <g class="tzr-cells">
+    <rect x="24" y="72" width="37" height="34" rx="6" />
+    <rect x="66.5" y="72" width="37" height="34" rx="6" />
+    <rect x="109" y="72" width="37" height="34" rx="6" />
+    <rect x="151.5" y="72" width="37" height="34" rx="6" />
+  </g>
+  <text class="tzr-cjk" x="42.5" y="96">&#25171;</text>
+  <text class="tzr-cjk" x="85" y="96">&#30005;</text>
+  <text class="tzr-cjk" x="127.5" y="96">&#35805;</text>
+  <text class="tzr-cjk" x="170" y="96">&#32473;</text>
+
+  <g class="tzr-on">
+    <rect class="tzr-cell-good" x="194" y="72" width="37" height="34" rx="6" />
+    <rect class="tzr-cell-good" x="236.5" y="72" width="37" height="34" rx="6" />
+    <rect class="tzr-cell-good" x="279" y="72" width="37" height="34" rx="6" />
+    <text class="tzr-cjk tzr-good" x="212.5" y="96">&#37073;</text>
+    <text class="tzr-cjk tzr-good" x="255" y="96">&#26771;</text>
+    <text class="tzr-cjk tzr-good" x="297.5" y="96">&#35946;</text>
+    <text class="tzr-note tzr-good-note" x="194" y="126">calls Zheng Zihao</text>
+  </g>
+
+  <g class="tzr-off">
+    <rect class="tzr-cell-bad" x="194" y="72" width="37" height="34" rx="6" />
+    <rect class="tzr-cell-bad" x="236.5" y="72" width="37" height="34" rx="6" />
+    <rect class="tzr-cell-bad" x="279" y="72" width="37" height="34" rx="6" />
+    <text class="tzr-cjk tzr-bad" x="212.5" y="96">&#27491;</text>
+    <text class="tzr-cjk tzr-bad" x="255" y="96">&#23376;</text>
+    <text class="tzr-cjk tzr-bad" x="297.5" y="96">&#21495;</text>
+    <text class="tzr-note tzr-bad-note" x="194" y="126">no contact matches</text>
+  </g>
+</svg>

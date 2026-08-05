@@ -17,9 +17,9 @@ My work sits at the intersection of deep-learning infrastructure, speech recogni
 
 I graduated from South China Normal University in 2015 with a B.Sc. in Information and Computing Science. From my second undergraduate year, I taught myself machine learning through open courseware.
 
-In July 2015 I joined Alibaba. From 2017 I served as a founding core AI architect for **Tmall Genie**, designing its NLU domain-classification engine and end-to-end ASR architecture — the two foundational AI layers every voice command passes through. During that period Tmall Genie grew to tens of millions of households and became China's leading smart speaker platform.
+In July 2015 I joined Alibaba, where I stayed until May 2021. From 2017 I served as a founding core AI architect for **Tmall Genie**, designing its NLU domain-classification engine and end-to-end ASR architecture — the two foundational AI layers every voice command passes through. During that period Tmall Genie became China's number-one smart speaker, shipping 15.61 million units in 2019 (IDC); the platform reported over 40 million households by 2023.
 
-In parallel, I created **standalone TensorBoard** (`dmlc/tensorboard`) so non-TensorFlow teams could inspect training runs without framework lock-in. That work was adopted by AWS as the basis for `mxboard`, referenced by PyTorch's `tensorboardX`, and publicly acknowledged by Google's TensorBoard engineering leadership. I later served as an ASF Board-appointed member of the Apache MXNet Project Management Committee.
+In parallel, I created **standalone TensorBoard** (`dmlc/tensorboard`) — a logging and rendering tool that ran without TensorFlow, so teams on other frameworks could inspect their own training runs. AWS built `mxboard` on it, PyTorch's `tensorboardX` references it, and Google's engineering director for TensorFlow acknowledged the work publicly and committed to removing the same dependency from TensorBoard itself. I later served as an ASF Board-appointed member of the Apache MXNet Project Management Committee.
 
 I am first inventor on two granted patents covering memory-network NLU domain classification and Indicator Loss for context-aware ASR.
 

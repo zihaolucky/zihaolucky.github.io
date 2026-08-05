@@ -1,0 +1,31 @@
+<div class="xpl" data-explorable="nlu-anchor">
+  <p class="xpl-kicker">Interactive — the mechanism in claim 1</p>
+  <h3 class="xpl-title">Why one weak match becomes total certainty</h3>
+  <p class="xpl-intro">
+    Attention weights are normalised: each template's weight is its similarity divided by the sum of all of
+    them. So a weight does not measure how well a template fits — it measures how well it fits <b>compared with
+    everything else in the read</b>. Take the everything else away and a poor match is indistinguishable from a
+    perfect one. The basic templates are what stays in the read: one per domain, each a learned representation
+    of that class. Switch them off below and watch an unchanged similarity score turn into total confidence.
+  </p>
+  <div data-role="mount">
+    <p class="xpl-fallback">
+      This interactive needs JavaScript. In short: if one template matches an utterance, normalised attention
+      must assign it all of the weight however badly it fits, because there is nothing else in the denominator.
+      CN112002313B requires the matched set to always include preset basic templates — in production, one
+      learned representation per domain class — so the read is never a single template, and a class the
+      semantics actually point at can outvote a template that merely fired. On "Jay Chou's father" the music
+      template scores 0.10 against a question-answering class at 0.70, and takes 10% of the read instead
+      of 100%.
+    </p>
+  </div>
+  <p class="xpl-note">
+    Illustrative model of the mechanism. The weights on the first tab are the patent's own worked example —
+    CN112002313B, Figure 2, where three basic templates and the matched template score 0.10, 0.70, 0.10 and
+    0.10 against the semantic vector — applied here to a request that shows the failure in production terms;
+    the patent's own illustration uses garbled catalogue entities instead. A real read also contains every
+    template that matched, not just one. The patent states the purpose directly: including basic templates
+    means "the influence of dirty data can be reduced, and more accurate interaction results can be obtained
+    even if the dirty data is hit by the search match."
+  </p>
+</div>

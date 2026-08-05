@@ -2,6 +2,10 @@
 layout: default
 ---
 
-<article class="page-content">
+<article class="page-content{% if page.case_study %} case-study{% endif %}">
     {{ content }}
 </article>
+
+{% if page.explorables %}
+<script src="{{ site.baseurl }}/js/explorables.js?v={{ site.time | date: '%s' }}" defer></script>
+{% endif %}

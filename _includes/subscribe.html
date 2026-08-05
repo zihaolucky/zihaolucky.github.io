@@ -1,0 +1,34 @@
+{% assign has_buttondown = false %}
+{% if site.newsletter.buttondown and site.newsletter.buttondown != "" %}
+  {% assign has_buttondown = true %}
+{% endif %}
+
+<aside class="subscribe" aria-label="Subscribe">
+  <p class="subscribe-lead">Get new posts by email or RSS.</p>
+
+  {% if has_buttondown %}
+  <form
+    class="subscribe-form"
+    action="https://buttondown.com/api/emails/embed-subscribe/{{ site.newsletter.buttondown }}"
+    method="post"
+    target="_blank"
+  >
+    <label class="visually-hidden" for="bd-email">Email address</label>
+    <input
+      id="bd-email"
+      class="subscribe-input"
+      type="email"
+      name="email"
+      required
+      placeholder="you@example.com"
+      autocomplete="email"
+    />
+    <button class="subscribe-button" type="submit">Subscribe</button>
+  </form>
+  <p class="subscribe-note">Email signup via <a href="https://buttondown.com" target="_blank" rel="noopener noreferrer">Buttondown</a>. Or follow the <a href="{{ site.baseurl }}{{ site.feed }}">RSS</a> feed.</p>
+  {% else %}
+  <p class="subscribe-note">
+    <a class="subscribe-rss" href="{{ site.baseurl }}{{ site.feed }}">Subscribe via RSS</a>
+  </p>
+  {% endif %}
+</aside>

@@ -1,0 +1,23 @@
+<div class="xpl" data-explorable="nlu-router">
+  <p class="xpl-kicker">Interactive — try to tune the cascade</p>
+  <h3 class="xpl-title">Find the threshold that routes all seven correctly</h3>
+  <p class="xpl-intro">
+    The industry standard was <b>rules first, then model</b>: product teams hand-wrote matching templates, a
+    template match won outright, and the learned model only ran when nothing matched. That leaves one thing to
+    tune — how strong a match has to be before the rule is trusted. Drag it and try to find a threshold where
+    all seven of these real request types land in the right place.
+  </p>
+  <div data-role="mount">
+    <p class="xpl-fallback">
+      This interactive needs JavaScript. In short: no threshold on match strength routes all seven utterances
+      correctly, because a template can match strongly and still be wrong — and no threshold can tell those
+      two apart. The patented memory network weighs the template evidence per utterance instead.
+    </p>
+  </div>
+  <p class="xpl-note">
+    Illustrative model of the mechanism, not production data — the match scores are simplified so the
+    trade-off is visible in seven cases instead of millions. The production result of replacing the cascade
+    with learned fusion is on the chart further down: <b>~65% → ~85%</b> domain-classification accuracy, and
+    <b>35%</b> fewer routing errors from the fusion layer alone.
+  </p>
+</div>
