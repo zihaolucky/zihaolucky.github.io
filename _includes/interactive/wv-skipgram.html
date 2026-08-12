@@ -1,0 +1,56 @@
+{% assign wv_lang = page.lang | default: 'zh' %}
+<div class="xpl" data-explorable="wv-skipgram" data-lang="{{ wv_lang }}">
+  {% if wv_lang == 'en' %}
+  <p class="xpl-kicker">Interactive — the algorithmic half</p>
+  <h3 class="xpl-title">Same window, wired into skip-gram</h3>
+  <p class="xpl-intro">
+    Still the same window — except now every stop hands each "center → context" pair to gradient descent,
+    pushing the center vector to predict those context words more easily. That is all of skip-gram's input,
+    and all of what it does. The six cards below keep each word's homework on the page; the bar at the bottom
+    is its cosine with "apple." Read them side by side: how the corpus-given questions line up with the
+    training-given geometry. Then switch to the control: leave the algorithm alone, shuffle only the word order.
+  </p>
+  <div data-role="mount">
+    <p class="xpl-fallback">
+      This interactive needs JavaScript. It really trains a skip-gram in the page: every window stop emits
+      "center → context" samples, and negative sampling with SGD pushes the model's confidence on those pairs
+      toward 1. Because "apple" and "banana" are repeatedly asked to predict the same words (ate, an, This, tastes, sweet),
+      their vectors have nowhere to go but toward each other: after eighty epochs, cos(apple, banana) is 1.00 and
+      cos(apple, Beijing) is about 0.12. Shuffle the corpus and retrain with the same algorithm and epochs —
+      the two numbers become hard to tell apart. Linguistic regularity decides which words share homework;
+      the training objective turns "same homework" into "same direction." You need both.
+    </p>
+  </div>
+  <p class="xpl-note">
+    Vectors are 4-D here: real models have hundreds of dimensions; this is enough to show the effect and still fast.
+    The number under each context word is the model's current confidence; with negative sampling it does not converge to 1 — watch the trend.
+    Use “Train all” for the result, or “Step” / “Jump to next target” to see how samples form.
+    The RNG seed is fixed, so every refresh looks the same. The control still converges: fitting is not the same as learning a semantic representation.
+  </p>
+  {% else %}
+  <p class="xpl-kicker">互动 — 算法那一半</p>
+  <h3 class="xpl-title">同一个窗口，接上 skip-gram</h3>
+  <p class="xpl-intro">
+    还是刚才那个窗口，只是这次它每停一下，就把「中心词 → 每个上下文词」交给梯度下降：
+    让中心词的向量更容易预测出这几个词。这就是 skip-gram 的全部输入，也是它做的全部事情。
+    下面六张卡把每个词收到的题目一直留在页面上，卡底那条是它和「苹果」的余弦——
+    左右对着看，语料给的题目和训练给的几何是怎么对上的。看完再切到对照组：算法一个字不改，只把语料的词序打乱。
+  </p>
+  <div data-role="mount">
+    <p class="xpl-fallback">
+      这个互动需要 JavaScript。它在页面里真的训练一个 skip-gram：窗口每停一次就产出几条
+      「中心词 → 上下文词」样本，用负采样和随机梯度下降把模型对这几对的把握往 1 推。
+      因为「苹果」和「香蕉」一次次被要求预测同一批词（吃、了、这个、真、甜），
+      它们的向量只能越长越像：语料过八十轮之后 cos(苹果, 香蕉) 是 1.00，cos(苹果, 北京) 是 0.12。
+      对照组把语料词序打乱后重训，同样的算法、同样的轮数，两个数字分别是 0.42 和 0.28——分不出高低。
+      语言学规律决定了哪些词要做同一道题，训练目标把「同一道题」变成「同一个方向」，两者缺一不可。
+    </p>
+  </div>
+  <p class="xpl-note">
+    向量是四维的：真实模型有几百维，这里取到够用又能算得飞快。
+    上下文词下方的数字是模型此刻认为中心词会带出这个词的把握；因为用了负采样，它收敛到的不是 1，
+    看趋势就好。想快点得到结果就按「直接训完」，想看清样本怎么产生就用「走一停」和「跳到下一个目标词」。
+    随机数种子固定，每次刷新过程都一样。值得留意的是，对照组一样收敛得动——拟合得动，不等于学到的表示有语义。
+  </p>
+  {% endif %}
+</div>

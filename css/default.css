@@ -3258,6 +3258,376 @@ pre code {
   }
 }
 
+/* The word-vector explorables — 面试小问题（一）.
+   A shared scatter plot plus the panels that drive it. */
+
+/* The corpus and the window walking over it */
+
+.wv-corpus {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+}
+
+.wv-line {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 3px;
+  padding: 1px 0;
+}
+
+.wv-token {
+  display: inline-block;
+  padding: 0.16rem 0.4rem;
+  border-radius: 5px;
+  border: 1px solid transparent;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--color-body);
+  transition: background var(--transition), color var(--transition), border-color var(--transition);
+}
+
+.wv-token.is-dim {
+  opacity: 0.32;
+}
+
+.wv-token.is-context {
+  background: var(--color-card);
+  border-color: var(--color-hairline);
+}
+
+.wv-token.is-center {
+  background: var(--color-clay);
+  border-color: var(--color-clay);
+  color: var(--color-on-dark);
+  font-weight: 600;
+}
+
+.wv-token.is-fruit,
+.wv-token.is-city {
+  font-weight: 600;
+}
+
+.wv-token.is-fruit { color: #a8452a; }
+.wv-token.is-city { color: #3f6a97; }
+
+.wv-token.is-center.is-fruit,
+.wv-token.is-center.is-city {
+  color: var(--color-on-dark);
+}
+
+.wv-radius {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-left: auto;
+  font-size: 0.78rem;
+  color: var(--color-muted-soft);
+}
+
+.wv-radius-val {
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  color: var(--color-ink);
+  min-width: 1ch;
+  text-align: center;
+}
+
+.xpl-btn.wv-mini {
+  padding: 0.15rem 0.55rem;
+  font-size: 0.9rem;
+  line-height: 1.2;
+}
+
+/* What each word collected */
+
+.wv-tally-panel {
+  margin-top: 1.1rem;
+}
+
+.wv-tally-row {
+  display: grid;
+  grid-template-columns: 3.2rem minmax(0, 1fr);
+  gap: 0.6rem;
+  align-items: baseline;
+  padding: 0.4rem 0;
+  border-top: 1px solid var(--color-hairline-soft);
+}
+
+.wv-tally-row:first-of-type {
+  border-top: 0;
+}
+
+.wv-tally-name {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.wv-tally-name.is-fruit { color: #a8452a; }
+.wv-tally-name.is-city { color: #3f6a97; }
+
+.wv-tally-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.wv-tally-chip {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  font-size: 0.82rem;
+  padding: 0.1rem 0.42rem;
+  border-radius: 5px;
+  border: 1px solid var(--color-hairline-soft);
+  background: #ffffff;
+  color: var(--color-muted);
+}
+
+.wv-tally-chip.is-shared {
+  border-color: var(--color-clay);
+  background: #fdf1ea;
+  color: #8a4426;
+  font-weight: 600;
+}
+
+.wv-tally-chip small {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  opacity: 0.7;
+  margin-left: 0.15rem;
+}
+
+.wv-tally-empty {
+  font-size: 0.8rem;
+  color: var(--color-muted-soft);
+}
+
+/* The training sample a single stop of the window produces */
+
+.wv-task-panel {
+  margin-top: 1.1rem;
+}
+
+.wv-task {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 0.9rem;
+  align-items: center;
+}
+
+.wv-task-center {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.wv-task-cap {
+  font-size: 0.68rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-muted-soft);
+}
+
+.wv-task-word {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  padding: 0.25rem 0.7rem;
+  border-radius: var(--radius-md);
+  background: var(--color-card);
+  text-align: center;
+}
+
+.wv-task-word.is-fruit { color: #a8452a; }
+.wv-task-word.is-city { color: #3f6a97; }
+
+.wv-task-arrow {
+  font-size: 0.76rem;
+  color: var(--color-muted-soft);
+  white-space: nowrap;
+}
+
+.wv-task-ctx {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  min-height: 2.6rem;
+  align-items: center;
+}
+
+.wv-pair {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.05rem;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  font-size: 0.9rem;
+  padding: 0.25rem 0.6rem;
+  border-radius: var(--radius-md);
+  border: 1.5px solid var(--color-hairline);
+  background: #ffffff;
+  color: var(--color-body);
+  transition: border-color 0.2s linear;
+}
+
+.wv-pair b {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.wv-pair small {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-variant-numeric: tabular-nums;
+  color: #8a4426;
+}
+
+.wv-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.55rem;
+}
+
+.wv-card {
+  border: 1px solid var(--color-hairline-soft);
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  padding: 0.6rem 0.7rem 0.7rem;
+  transition: border-color 0.2s linear, box-shadow 0.2s linear;
+}
+
+.wv-card.is-live {
+  border-color: var(--color-clay);
+  box-shadow: 0 0 0 3px rgba(217, 119, 87, 0.12);
+}
+
+.wv-card-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.wv-card-word {
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.wv-card.is-fruit .wv-card-word { color: #a8452a; }
+.wv-card.is-city .wv-card-word { color: #3f6a97; }
+
+.wv-card-badge {
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--color-muted-soft);
+  white-space: nowrap;
+}
+
+.wv-card-ctx {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  min-height: 2.4rem;
+  align-content: flex-start;
+}
+
+.wv-card-empty {
+  font-size: 0.74rem;
+  color: var(--color-muted-soft);
+}
+
+.wv-card-bar {
+  height: 5px;
+  border-radius: 3px;
+  background: var(--color-hairline);
+  overflow: hidden;
+  margin-top: 0.6rem;
+}
+
+.wv-card-bar i {
+  display: block;
+  height: 100%;
+  width: 0;
+  border-radius: 3px;
+  transition: width 0.25s linear;
+}
+
+.wv-card.is-fruit .wv-card-bar i { background: #c25a38; }
+.wv-card.is-city .wv-card-bar i { background: #3f6a97; }
+
+@media (max-width: 640px) {
+  .wv-cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.wv-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.6rem;
+  margin-top: 1.1rem;
+}
+
+.wv-stats--three {
+  grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
+}
+
+.wv-stat {
+  background: #ffffff;
+  border: 1px solid var(--color-hairline-soft);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 0.85rem;
+}
+
+.wv-stat-val {
+  font-family: var(--font-serif);
+  font-size: 1.6rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.wv-stat-label {
+  font-size: 0.74rem;
+  color: var(--color-muted-soft);
+  margin-top: 0.2rem;
+}
+
+.wv-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: var(--color-hairline);
+  overflow: hidden;
+  margin-top: 0.8rem;
+}
+
+.wv-progress-fill {
+  height: 100%;
+  width: 0;
+  background: var(--color-clay);
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wv-token,
+  .wv-pair,
+  .wv-card,
+  .wv-card-bar i {
+    transition: none;
+  }
+}
+
+/* An explorable inside a blog post: the article column is 720px and sits at
+   the left of the grid, so the case-study full-bleed rule would overhang it. */
+.entry .xpl {
+  width: 100%;
+  margin-left: 0;
+  transform: none;
+}
+
 @media (max-width: 900px) {
   .project-figure--wide,
   .xpl {

@@ -1032,13 +1032,1056 @@
     root.classList.add('is-ready');
   }
 
+  /* ======================================================================
+     4. Word vectors — interview notes (1)
+
+     A sliding window over a dozen lines of corpus shows two things at once:
+     the contexts the window collects already carry semantics (wv-window), and
+     skip-gram is just treating every pair the window emits as a training
+     sample (wv-skipgram). Both widgets share one corpus and one window path
+     per language.
+     ====================================================================== */
+
+  var WV_GROUP_CLS = { fruit: 'is-fruit', city: 'is-city' };
+
+  var WV_DIM = 4;
+  var WV_EPOCHS = 80;
+  var WV_NEG = 5;
+  var WV_RADIUS = 2;
+  var WV_STOP_MS = 420;
+
+  function wvLangOf(root) {
+    var lang = (root.getAttribute('data-lang') ||
+      (document.documentElement && document.documentElement.lang) ||
+      'zh').toLowerCase();
+    return lang.indexOf('en') === 0 ? 'en' : 'zh';
+  }
+
+  function wvBuildPath(corpus) {
+    var out = [];
+    corpus.forEach(function (line, li) {
+      for (var ti = 0; ti < line.length; ti++) out.push({ line: li, tok: ti });
+    });
+    return out;
+  }
+
+  function wvLocale(lang) {
+    var isEn = lang === 'en';
+    var corpus = isEn ? [
+      ['I', 'morning', 'ate', 'an', 'apple'],
+      ['I', 'tomorrow', 'will', 'visit', 'Beijing'],
+      ['He', 'noon', 'ate', 'an', 'watermelon'],
+      ['He', 'tomorrow', 'will', 'visit', 'Shanghai'],
+      ['She', 'yesterday', 'ate', 'an', 'banana'],
+      ['She', 'soon', 'will', 'visit', 'Hangzhou'],
+      ['This', 'apple', 'tastes', 'sweet'],
+      ['Beijing', 'housing', 'prices', 'keep', 'rising'],
+      ['This', 'watermelon', 'tastes', 'sweet'],
+      ['Shanghai', 'housing', 'prices', 'keep', 'rising'],
+      ['This', 'banana', 'tastes', 'sweet'],
+      ['Hangzhou', 'housing', 'prices', 'keep', 'rising'],
+      ['Beijing', 'duck', 'tastes', 'great']
+    ] : [
+      ['我', '早上', '吃', '了', '苹果'],
+      ['我', '明天', '要', '去', '北京'],
+      ['他', '中午', '吃', '了', '西瓜'],
+      ['他', '明天', '要', '去', '上海'],
+      ['她', '昨天', '吃', '了', '香蕉'],
+      ['她', '下周', '要', '去', '杭州'],
+      ['这个', '苹果', '真', '甜'],
+      ['北京', '的', '房价', '又', '涨'],
+      ['这个', '西瓜', '真', '甜'],
+      ['上海', '的', '房价', '又', '涨'],
+      ['这个', '香蕉', '真', '甜'],
+      ['杭州', '的', '房价', '又', '涨'],
+      ['北京', '烤鸭', '真', '好吃']
+    ];
+
+    var words = isEn ? [
+      { id: 'apple', group: 'fruit' },
+      { id: 'banana', group: 'fruit' },
+      { id: 'watermelon', group: 'fruit' },
+      { id: 'Beijing', group: 'city' },
+      { id: 'Shanghai', group: 'city' },
+      { id: 'Hangzhou', group: 'city' }
+    ] : [
+      { id: '苹果', group: 'fruit' },
+      { id: '香蕉', group: 'fruit' },
+      { id: '西瓜', group: 'fruit' },
+      { id: '北京', group: 'city' },
+      { id: '上海', group: 'city' },
+      { id: '杭州', group: 'city' }
+    ];
+
+    var targets = {};
+    words.forEach(function (w) { targets[w.id] = w.group; });
+
+    var anchor = words[0].id;   /* apple / 苹果 */
+    var near = words[1].id;     /* banana / 香蕉 */
+    var far = words[3].id;      /* Beijing / 北京 */
+
+    var t = isEn ? {
+      play: 'Play',
+      pause: 'Pause',
+      step: 'Step',
+      finishSweep: 'Finish sweep',
+      reset: 'Reset',
+      radius: 'Window radius',
+      tallyTitle: 'Contexts each of the six words collected',
+      tallyEmpty: 'Not reached yet',
+      intraLabel: 'Shared contexts within a type',
+      interLabel: 'Shared contexts across types',
+      countUnit: '',
+      corpusStart: 'Corpus · window starts at the first word',
+      corpusDone: function (n) { return 'Corpus · window finished all ' + n + ' positions'; },
+      corpusAt: function (center, ctx, i, n) {
+        return 'Center “' + center + '” · context ' + ctx.join(', ') +
+          ' · position ' + i + '/' + n;
+      },
+      winIdleLabel: 'The window has not started',
+      winIdleText: function (r) {
+        return 'Hit Play. Every time the window stops on a word, the ' + r +
+          ' words on each side become its context — that is the entire sampling rule for skip-gram.';
+      },
+      winBusyLabel: 'Counting',
+      winBusyText: 'Watch the three fruit lines and the three city lines: the contexts they collect are nearly the same set. A highlighted chip means another word of the same type also received it.',
+      winDoneLabel: 'Sweep finished',
+      winDoneText: function (a, b, fruitShare, crossShare) {
+        return '“' + a + '” and “' + b + '” share ' + fruitShare.length +
+          ' context words (' + fruitShare.join(', ') + '); “' + a + '” and “' +
+          far + '” share only ' + crossShare.length +
+          (crossShare.length ? ' (' + crossShare.join(', ') + ')' : '') + '.';
+      },
+      winDoneEffect: 'No model and no vectors yet. Closeness in meaning is already written into the corpus — that is what the distributional hypothesis is about.',
+
+      tabReal: 'Normal corpus',
+      tabShuffled: 'Control: shuffle word order',
+      corpusIdle: 'Window waiting — hit Play or Step',
+      corpusEpoch: function (ep, eps, i, n) {
+        return 'Epoch ' + ep + '/' + eps + ' · window on word ' + i + '/' + n;
+      },
+      corpusTrainDone: function (eps) {
+        return 'Training done · corpus seen for ' + eps + ' epochs';
+      },
+      taskTitle: 'Training sample from this stop',
+      taskTitleLast: 'Training sample from the last stop',
+      taskCenter: 'Center',
+      taskArrow: 'predicts',
+      taskCap: 'These pairs are all of skip-gram\'s training data. The number under each context word is the model\'s current confidence that the center brings it out — every gradient step nudges it toward 1.',
+      cardsTitle: 'The homework each of the six words was asked to do',
+      cardsCap: 'The top of each card lists words that word was asked to predict; overlaps with “' +
+        anchor + '” are marked in orange — that is the corpus\'s homework. The bar below is its cosine with “' +
+        anchor + '” — that is the training\'s geometry. Watch the two halves line up.',
+      cardEmpty: 'Window has not stopped on this word yet',
+      cardAnchor: 'Anchor',
+      samplesLabel: 'Samples fed so far',
+      cosNearLabel: 'cos(' + anchor + ', ' + near + ')',
+      cosFarLabel: 'cos(' + anchor + ', ' + far + ')',
+      stepStop: 'Step one stop',
+      jumpTarget: 'Jump to next target',
+      finishTrain: 'Train all ' + WV_EPOCHS + ' epochs',
+      retrain: 'Re-initialize',
+      replay: 'Train again',
+      hintReal: 'Step slowly to see how samples form, then hit “Train all” for the result.',
+      hintShuffled: 'Same algorithm, hyperparameters, and epochs — only the corpus was shuffled.',
+      outBusyLabel: 'The only thing the gradient is doing',
+      outBusyReal: 'Make the center vector better at predicting the words in the window. That is all — a few more stops and the homework lists on the “' +
+        anchor + '”, “' + near + '”, and watermelon cards become the same set.',
+      outBusyShuffled: 'Look at the six cards: after shuffling, each word\'s homework is random noise. “' +
+        anchor + '” and “' + near + '” no longer share a list, so the model is fitting meaningless pairings.',
+      outBadLabel: 'Same algorithm, nothing learned',
+      outBadText: 'The model still converges — it really is fitting this corpus. But look at the cards: the homework lists are random, so the cosine bars scatter with them. Some fruits sit far from “' +
+        anchor + '”; some cities sit close. Who ends up near whom is now chance.',
+      outBadEffect: 'So this property is not something skip-gram invents on its own. The algorithm only presses regularities that already exist in the corpus into vector space; what is not in the corpus cannot be pressed out.',
+      outGoodLabel: 'Closeness is the result of sharing homework',
+      outGoodText: 'Nobody told the model that “' + anchor + ' and ' + near + ' are both fruits.” Look at the six cards: the more orange chips on top, the longer the cosine bar below — they line up. The cheapest way to do the same homework well is to point those vectors in almost the same direction.',
+      outGoodEffect: 'Linguistic regularity decides they share homework; the training objective turns “same homework” into “same direction.” That is what “neither alone is enough” means.'
+    } : {
+      play: '播放',
+      pause: '暂停',
+      step: '单步',
+      finishSweep: '直接扫完',
+      reset: '重来',
+      radius: '窗口半径',
+      tallyTitle: '这六个词各自收集到的上下文',
+      tallyEmpty: '还没轮到它',
+      intraLabel: '同类词之间共享的上下文词',
+      interLabel: '不同类词之间共享的上下文词',
+      countUnit: ' 个',
+      corpusStart: '语料 · 窗口从第一个词开始',
+      corpusDone: function (n) { return '语料 · 窗口已经扫完全部 ' + n + ' 个位置'; },
+      corpusAt: function (center, ctx, i, n) {
+        return '中心词「' + center + '」 · 上下文 ' + ctx.join('、') +
+          ' · 第 ' + i + '/' + n + ' 个位置';
+      },
+      winIdleLabel: '窗口还没开始走',
+      winIdleText: function (r) {
+        return '点「播放」。窗口每停在一个词上，就把它左右各 ' + r +
+          ' 个词记为这个词的上下文——这就是 skip-gram 取样的全部规则。';
+      },
+      winBusyLabel: '正在数',
+      winBusyText: '注意水果那三行和城市那三行：它们收集到的上下文词几乎是同一批。高亮的词表示同类的另一个词也收到了它。',
+      winDoneLabel: '扫完了',
+      winDoneText: function (a, b, fruitShare, crossShare) {
+        return '「' + a + '」和「' + b + '」共享 ' + fruitShare.length +
+          ' 个上下文词（' + fruitShare.join('、') + '）；「' + a + '」和「' +
+          far + '」只共享 ' + crossShare.length + ' 个' +
+          (crossShare.length ? '（' + crossShare.join('、') + '）' : '') + '。';
+      },
+      winDoneEffect: '到这一步还没有任何模型、任何向量。语义的远近已经写在语料里了——这就是分布假说说的事。',
+
+      tabReal: '正常语料',
+      tabShuffled: '对照组：把语料的词序打乱',
+      corpusIdle: '窗口还在原地，按「播放」或「走一停」',
+      corpusEpoch: function (ep, eps, i, n) {
+        return '第 ' + ep + '/' + eps + ' 轮 · 窗口停在第 ' + i + '/' + n + ' 个词';
+      },
+      corpusTrainDone: function (eps) {
+        return '训练结束 · 语料一共过了 ' + eps + ' 轮';
+      },
+      taskTitle: '这一停产出的训练样本',
+      taskTitleLast: '最后一停产出的训练样本',
+      taskCenter: '中心词',
+      taskArrow: '要预测出',
+      taskCap: 'skip-gram 的训练数据就只有这些。每个上下文词下面的数字，是模型此刻认为「中心词会带出这个词」的把握——梯度每次就把它往 1 推一点。',
+      cardsTitle: '六个词各自被要求做的题',
+      cardsCap: '上半张卡是这个词被要求预测过的词，和「' + anchor +
+        '」重合的标成橙色，这是语料给的题目；下面那条是它的向量此刻和「' + anchor +
+        '」的余弦，是训练给的结果。看这两半是怎么对上的。',
+      cardEmpty: '窗口还没停到这个词上',
+      cardAnchor: '基准词',
+      samplesLabel: '已经喂进去的样本',
+      cosNearLabel: 'cos(' + anchor + ', ' + near + ')',
+      cosFarLabel: 'cos(' + anchor + ', ' + far + ')',
+      stepStop: '走一停',
+      jumpTarget: '跳到下一个目标词',
+      finishTrain: '直接训完 ' + WV_EPOCHS + ' 轮',
+      retrain: '重新随机初始化',
+      replay: '再训一次',
+      hintReal: '慢慢单步看清楚样本怎么来的，再按「直接训完」看结果。',
+      hintShuffled: '算法、超参、轮数都没动，只有语料被打乱了。',
+      outBusyLabel: '梯度在做的唯一一件事',
+      outBusyReal: '让中心词的向量更容易预测出窗口里那几个词。仅此而已——多走几停就会看到，「' +
+        anchor + '」「' + near + '」「西瓜」三张卡上的题目单慢慢变成了同一批词。',
+      outBusyShuffled: '看下面六张卡：词序打乱之后，每个词收到的题目都是随便凑的，「' +
+        anchor + '」和「' + near + '」的题目单不再重合，模型学的是一堆没有道理的搭配。',
+      outBadLabel: '同一个算法，什么也没学到',
+      outBadText: '模型照样收敛了，它确实在拟合这份语料。但看六张卡：题目单已经是随机拼凑的，下面那排余弦也就跟着乱了——有的水果离「' +
+        anchor + '」很远，有的城市反倒很近。谁和谁近，现在纯属偶然。',
+      outBadEffect: '所以这个性质不是 skip-gram 单独变出来的。算法只负责把语料里已有的规律压进向量空间；语料里没有的，它也压不出来。',
+      outGoodLabel: '相近是「被要求做同一道题」的结果',
+      outGoodText: '没有人告诉模型「' + anchor + '和' + near +
+        '都是水果」。看六张卡：上半张橙色的词越多，下半张的余弦条就越长，两者严丝合缝。要同时做好同一批题，最省力的办法就是把这几个向量放到几乎同一个方向上。',
+      outGoodEffect: '语言学规律决定了它们要做同一道题，训练目标把「同一道题」变成「同一个方向」——所谓「缺一不可」，指的就是这两步。'
+    };
+
+    /* Fix the one hard-coded Chinese fruit name in the EN busy text. */
+    if (isEn) {
+      t.outBusyReal = 'Make the center vector better at predicting the words in the window. That is all — a few more stops and the homework lists on the “' +
+        anchor + '”, “' + near + '”, and “watermelon” cards become the same set.';
+    }
+
+    return {
+      lang: lang,
+      corpus: corpus,
+      words: words,
+      targets: targets,
+      path: wvBuildPath(corpus),
+      anchor: anchor,
+      near: near,
+      far: far,
+      t: t
+    };
+  }
+
+  function wvContextsAt(corpus, pos, radius) {
+    var line = corpus[pos.line];
+    var from = Math.max(0, pos.tok - radius);
+    var to = Math.min(line.length - 1, pos.tok + radius);
+    var out = [];
+    for (var i = from; i <= to; i++) {
+      if (i !== pos.tok) out.push(line[i]);
+    }
+    return out;
+  }
+
+  function wvIndex(words, id) {
+    for (var i = 0; i < words.length; i++) {
+      if (words[i].id === id) return i;
+    }
+    return 0;
+  }
+
+  /* A tiny deterministic PRNG, so every reader sees the same run. */
+  function wvRandom(seed) {
+    var s = seed >>> 0;
+    return function () {
+      s = (s + 0x6d2b79f5) >>> 0;
+      var t = s;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+
+  function wvSigmoid(x) {
+    if (x > 30) return 1;
+    if (x < -30) return 0;
+    return 1 / (1 + Math.exp(-x));
+  }
+
+  function wvCosine(a, b) {
+    var dot = 0, na = 0, nb = 0;
+    for (var i = 0; i < a.length; i++) {
+      dot += a[i] * b[i];
+      na += a[i] * a[i];
+      nb += b[i] * b[i];
+    }
+    if (na === 0 || nb === 0) return 0;
+    return dot / (Math.sqrt(na) * Math.sqrt(nb));
+  }
+
+  /* The corpus is drawn once; moving the window only moves class names. */
+  function wvCorpusView(corpus, targets) {
+    var data = corpus;
+    var root = el('div', 'wv-corpus');
+    var spans = [];
+
+    data.forEach(function (line) {
+      var row = el('div', 'wv-line');
+      var rowSpans = line.map(function (w) {
+        var s = el('span', 'wv-token', w);
+        row.appendChild(s);
+        return s;
+      });
+      spans.push(rowSpans);
+      root.appendChild(row);
+    });
+
+    function render(pos, radius) {
+      spans.forEach(function (rowSpans, li) {
+        rowSpans.forEach(function (s, ti) {
+          var group = targets[data[li][ti]];
+          var cls = 'wv-token';
+          if (group) cls += ' ' + WV_GROUP_CLS[group];
+          if (pos) {
+            if (li === pos.line && ti === pos.tok) cls += ' is-center';
+            else if (li === pos.line && Math.abs(ti - pos.tok) <= radius) cls += ' is-context';
+            else cls += ' is-dim';
+          }
+          s.className = cls;
+        });
+      });
+    }
+
+    function setCorpus(next) {
+      data = next;
+      spans.forEach(function (rowSpans, li) {
+        rowSpans.forEach(function (s, ti) { s.textContent = data[li][ti]; });
+      });
+    }
+
+    return { root: root, render: render, setCorpus: setCorpus };
+  }
+
+  function wvShuffledCorpus(corpus) {
+    var rng = wvRandom(778899);
+    var bag = [];
+    corpus.forEach(function (line) {
+      line.forEach(function (w) { bag.push(w); });
+    });
+    for (var i = bag.length - 1; i > 0; i--) {
+      var j = Math.floor(rng() * (i + 1));
+      var t = bag[i]; bag[i] = bag[j]; bag[j] = t;
+    }
+    var k = 0;
+    return corpus.map(function (line) {
+      return line.map(function () { return bag[k++]; });
+    });
+  }
+
+  /* ---------------------------------------------------------------------
+     4a. The window — where the regularity is visible without any model
+     --------------------------------------------------------------------- */
+
+  function initWvWindow(root) {
+    var mount = root.querySelector('[data-role="mount"]');
+    if (!mount) return;
+
+    var L = wvLocale(wvLangOf(root));
+    var t = L.t;
+    var state = { step: -1, radius: 2, timer: null, tally: {} };
+
+    var view = wvCorpusView(L.corpus, L.targets);
+    var corpusPanel = el('div', 'xpl-panel');
+    var corpusTitle = el('div', 'xpl-panel-title', t.corpusStart);
+    corpusPanel.appendChild(corpusTitle);
+    corpusPanel.appendChild(view.root);
+
+    var controls = el('div', 'xpl-controls');
+    var btnPlay = el('button', 'xpl-btn', t.play);
+    btnPlay.type = 'button';
+    var btnStep = el('button', 'xpl-btn', t.step);
+    btnStep.type = 'button';
+    var btnEnd = el('button', 'xpl-btn', t.finishSweep);
+    btnEnd.type = 'button';
+    var btnReset = el('button', 'xpl-btn', t.reset);
+    btnReset.type = 'button';
+
+    var radiusBox = el('span', 'wv-radius');
+    radiusBox.appendChild(el('span', 'wv-radius-cap', t.radius));
+    var btnMinus = el('button', 'xpl-btn wv-mini', '−');
+    btnMinus.type = 'button';
+    var radiusVal = el('span', 'wv-radius-val', '2');
+    var btnPlus = el('button', 'xpl-btn wv-mini', '+');
+    btnPlus.type = 'button';
+    radiusBox.appendChild(btnMinus);
+    radiusBox.appendChild(radiusVal);
+    radiusBox.appendChild(btnPlus);
+
+    controls.appendChild(btnPlay);
+    controls.appendChild(btnStep);
+    controls.appendChild(btnEnd);
+    controls.appendChild(btnReset);
+    controls.appendChild(radiusBox);
+    corpusPanel.appendChild(controls);
+
+    var tallyPanel = el('div', 'xpl-panel wv-tally-panel');
+    tallyPanel.appendChild(el('div', 'xpl-panel-title', t.tallyTitle));
+    var tallyRows = L.words.map(function (w) {
+      var row = el('div', 'wv-tally-row');
+      row.appendChild(el('span', 'wv-tally-name ' + WV_GROUP_CLS[w.group], w.id));
+      var chips = el('span', 'wv-tally-chips');
+      row.appendChild(chips);
+      tallyPanel.appendChild(row);
+      return chips;
+    });
+
+    var stats = el('div', 'wv-stats');
+    function statBlock(label) {
+      var box = el('div', 'wv-stat');
+      var val = el('div', 'wv-stat-val', '—');
+      box.appendChild(val);
+      box.appendChild(el('div', 'wv-stat-label', label));
+      stats.appendChild(box);
+      return val;
+    }
+    var intraVal = statBlock(t.intraLabel);
+    var interVal = statBlock(t.interLabel);
+
+    var out = el('div', 'xpl-out');
+    var outLabel = el('div', 'xpl-out-label');
+    var outText = el('div', 'anch-out-text');
+    var outEffect = el('div', 'xpl-out-effect');
+    out.appendChild(outLabel);
+    out.appendChild(outText);
+    out.appendChild(outEffect);
+
+    function stop() {
+      if (state.timer) {
+        clearInterval(state.timer);
+        state.timer = null;
+      }
+    }
+
+    function reset() {
+      stop();
+      state.step = -1;
+      state.tally = {};
+      L.words.forEach(function (w) { state.tally[w.id] = {}; });
+    }
+
+    function advance() {
+      if (state.step >= L.path.length - 1) {
+        stop();
+        state.step = L.path.length;
+        return false;
+      }
+      state.step++;
+      var pos = L.path[state.step];
+      var center = L.corpus[pos.line][pos.tok];
+      if (L.targets[center]) {
+        var bucket = state.tally[center];
+        wvContextsAt(L.corpus, pos, state.radius).forEach(function (c) {
+          bucket[c] = (bucket[c] || 0) + 1;
+        });
+      }
+      return true;
+    }
+
+    function play() {
+      if (state.timer) { stop(); render(); return; }
+      if (state.step >= L.path.length) reset();
+      state.timer = setInterval(function () {
+        if (!advance()) { render(); return; }
+        render();
+      }, reducedMotion() ? 40 : 240);
+      render();
+    }
+
+    btnPlay.addEventListener('click', play);
+    btnStep.addEventListener('click', function () {
+      stop();
+      if (state.step >= L.path.length) reset();
+      advance();
+      render();
+    });
+    btnEnd.addEventListener('click', function () {
+      stop();
+      if (state.step >= L.path.length) reset();
+      while (advance()) { /* run the whole corpus */ }
+      render();
+    });
+    btnReset.addEventListener('click', function () {
+      reset();
+      render();
+    });
+    btnMinus.addEventListener('click', function () {
+      if (state.radius <= 1) return;
+      state.radius--;
+      reset();
+      while (advance()) { /* recount with the new window */ }
+      render();
+    });
+    btnPlus.addEventListener('click', function () {
+      if (state.radius >= 4) return;
+      state.radius++;
+      reset();
+      while (advance()) { /* recount with the new window */ }
+      render();
+    });
+
+    function shared(a, b) {
+      var out2 = [];
+      Object.keys(state.tally[a]).forEach(function (w) {
+        if (state.tally[b][w]) out2.push(w);
+      });
+      return out2;
+    }
+
+    function render() {
+      var done = state.step >= L.path.length;
+      var started = state.step >= 0;
+      var pos = started && !done ? L.path[state.step] : null;
+
+      view.render(pos, state.radius);
+      radiusVal.textContent = String(state.radius);
+      btnPlay.textContent = state.timer ? t.pause : t.play;
+      btnPlay.classList.toggle('is-active', !!state.timer);
+
+      if (pos) {
+        var center = L.corpus[pos.line][pos.tok];
+        var ctx = wvContextsAt(L.corpus, pos, state.radius);
+        corpusTitle.textContent = t.corpusAt(center, ctx, state.step + 1, L.path.length);
+      } else if (done) {
+        corpusTitle.textContent = t.corpusDone(L.path.length);
+      } else {
+        corpusTitle.textContent = t.corpusStart;
+      }
+
+      tallyRows.forEach(function (chips, i) {
+        var word = L.words[i];
+        var bucket = state.tally[word.id] || {};
+        var entries = Object.keys(bucket).map(function (w) {
+          return { w: w, n: bucket[w] };
+        });
+        entries.sort(function (a, b) { return b.n - a.n; });
+
+        chips.innerHTML = '';
+        if (!entries.length) {
+          chips.appendChild(el('span', 'wv-tally-empty', t.tallyEmpty));
+          return;
+        }
+        entries.forEach(function (e) {
+          var alsoElsewhere = L.words.some(function (other) {
+            return other.id !== word.id &&
+              other.group === word.group &&
+              state.tally[other.id] &&
+              state.tally[other.id][e.w];
+          });
+          var chip = el('span', 'wv-tally-chip' + (alsoElsewhere ? ' is-shared' : ''), e.w);
+          if (e.n > 1) chip.appendChild(el('small', null, '×' + e.n));
+          chips.appendChild(chip);
+        });
+      });
+
+      var intra = [], inter = [];
+      for (var i = 0; i < L.words.length; i++) {
+        for (var j = i + 1; j < L.words.length; j++) {
+          var n = shared(L.words[i].id, L.words[j].id).length;
+          if (L.words[i].group === L.words[j].group) intra.push(n);
+          else inter.push(n);
+        }
+      }
+      function avg(arr) {
+        return arr.reduce(function (sum, v) { return sum + v; }, 0) / arr.length;
+      }
+      intraVal.textContent = started ? avg(intra).toFixed(1) + t.countUnit : '—';
+      interVal.textContent = started ? avg(inter).toFixed(1) + t.countUnit : '—';
+
+      if (!started) {
+        out.className = 'xpl-out';
+        outLabel.textContent = t.winIdleLabel;
+        outText.textContent = t.winIdleText(state.radius);
+        outEffect.textContent = '';
+      } else if (!done) {
+        out.className = 'xpl-out';
+        outLabel.textContent = t.winBusyLabel;
+        outText.textContent = t.winBusyText;
+        outEffect.textContent = '';
+      } else {
+        var fruitShare = shared(L.anchor, L.near);
+        var crossShare = shared(L.anchor, L.far);
+        out.className = 'xpl-out is-good';
+        outLabel.textContent = t.winDoneLabel;
+        outText.textContent = t.winDoneText(L.anchor, L.near, fruitShare, crossShare);
+        outEffect.textContent = t.winDoneEffect;
+      }
+    }
+
+    mount.appendChild(corpusPanel);
+    mount.appendChild(tallyPanel);
+    mount.appendChild(stats);
+    mount.appendChild(out);
+    reset();
+    render();
+    root.classList.add('is-ready');
+  }
+
+  /* ---------------------------------------------------------------------
+     4b. The same window, wired into skip-gram
+     --------------------------------------------------------------------- */
+
+  function initWvSkipgram(root) {
+    var mount = root.querySelector('[data-role="mount"]');
+    if (!mount) return;
+
+    var L = wvLocale(wvLangOf(root));
+    var t = L.t;
+    var state = {
+      shuffled: false, step: 0, epoch: 0, samples: 0,
+      timer: null, started: false, tasks: {}
+    };
+    var corpus, vocab, vocabIndex, V, U, negTable, rng, current;
+
+    var tabs = el('div', 'xpl-tabs');
+    var btnReal = el('button', 'xpl-btn', t.tabReal);
+    btnReal.type = 'button';
+    var btnShuffled = el('button', 'xpl-btn', t.tabShuffled);
+    btnShuffled.type = 'button';
+    tabs.appendChild(btnReal);
+    tabs.appendChild(btnShuffled);
+
+    var view = wvCorpusView(L.corpus, L.targets);
+    var corpusPanel = el('div', 'xpl-panel');
+    var corpusTitle = el('div', 'xpl-panel-title', t.corpusIdle);
+    corpusPanel.appendChild(corpusTitle);
+    corpusPanel.appendChild(view.root);
+
+    var taskPanel = el('div', 'xpl-panel wv-task-panel');
+    var taskTitle = el('div', 'xpl-panel-title', t.taskTitle);
+    taskPanel.appendChild(taskTitle);
+
+    var task = el('div', 'wv-task');
+    var taskCenter = el('div', 'wv-task-center');
+    taskCenter.appendChild(el('span', 'wv-task-cap', t.taskCenter));
+    var taskWord = el('span', 'wv-task-word', '—');
+    taskCenter.appendChild(taskWord);
+    var taskArrow = el('div', 'wv-task-arrow', t.taskArrow);
+    var taskCtx = el('div', 'wv-task-ctx');
+    task.appendChild(taskCenter);
+    task.appendChild(taskArrow);
+    task.appendChild(taskCtx);
+    taskPanel.appendChild(task);
+
+    var taskCap = el('p', 'xpl-track-cap', t.taskCap);
+    taskPanel.appendChild(taskCap);
+
+    var cardsPanel = el('div', 'xpl-panel');
+    var cardsTitle = el('div', 'xpl-panel-title', t.cardsTitle);
+    cardsPanel.appendChild(cardsTitle);
+
+    var cardGrid = el('div', 'wv-cards');
+    var cards = {};
+    L.words.forEach(function (w) {
+      var card = el('div', 'wv-card ' + WV_GROUP_CLS[w.group]);
+      var head = el('div', 'wv-card-head');
+      head.appendChild(el('span', 'wv-card-word', w.id));
+      var badge = el('span', 'wv-card-badge', '—');
+      head.appendChild(badge);
+      var body = el('div', 'wv-card-ctx');
+      var track = el('div', 'wv-card-bar');
+      var fill = el('i');
+      track.appendChild(fill);
+      card.appendChild(head);
+      card.appendChild(body);
+      card.appendChild(track);
+      cardGrid.appendChild(card);
+      cards[w.id] = { root: card, badge: badge, body: body, fill: fill };
+    });
+    cardsPanel.appendChild(cardGrid);
+
+    var cardsCap = el('p', 'xpl-track-cap', t.cardsCap);
+    cardsPanel.appendChild(cardsCap);
+
+    var progress = el('div', 'wv-progress');
+    var bar = el('div', 'wv-progress-fill');
+    progress.appendChild(bar);
+    cardsPanel.appendChild(progress);
+
+    var stats = el('div', 'wv-stats wv-stats--three');
+    function statBlock(label) {
+      var box = el('div', 'wv-stat');
+      var val = el('div', 'wv-stat-val', '—');
+      box.appendChild(val);
+      box.appendChild(el('div', 'wv-stat-label', label));
+      stats.appendChild(box);
+      return val;
+    }
+    var sampleVal = statBlock(t.samplesLabel);
+    var simNearVal = statBlock(t.cosNearLabel);
+    var simFarVal = statBlock(t.cosFarLabel);
+
+    var controls = el('div', 'xpl-controls');
+    var btnPlay = el('button', 'xpl-btn', t.play);
+    btnPlay.type = 'button';
+    var btnStep = el('button', 'xpl-btn', t.stepStop);
+    btnStep.type = 'button';
+    var btnJump = el('button', 'xpl-btn', t.jumpTarget);
+    btnJump.type = 'button';
+    var btnFinish = el('button', 'xpl-btn', t.finishTrain);
+    btnFinish.type = 'button';
+    var btnRetrain = el('button', 'xpl-btn', t.retrain);
+    btnRetrain.type = 'button';
+    var hint = el('span', 'xpl-hint');
+    controls.appendChild(btnPlay);
+    controls.appendChild(btnStep);
+    controls.appendChild(btnJump);
+    controls.appendChild(btnFinish);
+    controls.appendChild(btnRetrain);
+    controls.appendChild(hint);
+
+    var out = el('div', 'xpl-out');
+    var outLabel = el('div', 'xpl-out-label');
+    var outText = el('div', 'anch-out-text');
+    var outEffect = el('div', 'xpl-out-effect');
+    out.appendChild(outLabel);
+    out.appendChild(outText);
+    out.appendChild(outEffect);
+
+    function stop() {
+      if (state.timer) {
+        clearInterval(state.timer);
+        state.timer = null;
+      }
+    }
+
+    function setup() {
+      stop();
+      corpus = state.shuffled ? wvShuffledCorpus(L.corpus) : L.corpus;
+      view.setCorpus(corpus);
+
+      vocab = [];
+      vocabIndex = {};
+      var counts = [];
+      corpus.forEach(function (line) {
+        line.forEach(function (w) {
+          if (vocabIndex[w] == null) {
+            vocabIndex[w] = vocab.length;
+            vocab.push(w);
+            counts.push(0);
+          }
+          counts[vocabIndex[w]]++;
+        });
+      });
+
+      rng = wvRandom(state.shuffled ? 5150 : 90210);
+      function randomVector() {
+        var v = [];
+        for (var i = 0; i < WV_DIM; i++) v.push((rng() - 0.5) * 0.6);
+        return v;
+      }
+      V = vocab.map(randomVector);
+      U = vocab.map(randomVector);
+
+      negTable = [];
+      counts.forEach(function (c, i) {
+        var slots = Math.max(1, Math.round(Math.pow(c, 0.75) * 3));
+        for (var k = 0; k < slots; k++) negTable.push(i);
+      });
+
+      state.step = 0;
+      state.epoch = 0;
+      state.samples = 0;
+      state.tasks = {};
+      current = null;
+    }
+
+    function update(label, wi, ci) {
+      var v = V[wi], u = U[ci];
+      var dot = 0;
+      for (var i = 0; i < WV_DIM; i++) dot += v[i] * u[i];
+      var lr = 0.12 * Math.max(0.08, 1 - state.epoch / WV_EPOCHS);
+      var g = (wvSigmoid(dot) - label) * lr;
+      for (var k = 0; k < WV_DIM; k++) {
+        var vk = v[k];
+        v[k] -= g * u[k];
+        u[k] -= g * vk;
+      }
+    }
+
+    function stepOnce() {
+      var pos = L.path[state.step];
+      var center = corpus[pos.line][pos.tok];
+      var ctx = wvContextsAt(corpus, pos, WV_RADIUS);
+      var wi = vocabIndex[center];
+
+      ctx.forEach(function (c) {
+        var ci = vocabIndex[c];
+        update(1, wi, ci);
+        for (var s = 0; s < WV_NEG; s++) {
+          var neg = negTable[Math.floor(rng() * negTable.length)];
+          if (neg !== ci) update(0, wi, neg);
+        }
+        state.samples++;
+      });
+
+      if (L.targets[center]) {
+        var seen = state.tasks[center] || (state.tasks[center] = { order: [], set: {} });
+        ctx.forEach(function (c) {
+          if (!seen.set[c]) {
+            seen.set[c] = true;
+            seen.order.push(c);
+          }
+        });
+        seen.rounds = (seen.rounds || 0) + 1;
+      }
+
+      current = { pos: pos, center: center, ctx: ctx, index: state.step + 1 };
+      state.step++;
+      if (state.step >= L.path.length) {
+        state.step = 0;
+        state.epoch++;
+      }
+    }
+
+    function done() {
+      return state.epoch >= WV_EPOCHS;
+    }
+
+    function play() {
+      stop();
+      if (done()) return;
+      state.timer = setInterval(function () {
+        stepOnce();
+        if (done()) stop();
+        render();
+      }, WV_STOP_MS);
+      render();
+    }
+
+    function start() {
+      stop();
+      setup();
+      if (reducedMotion()) {
+        while (!done()) stepOnce();
+        render();
+        return;
+      }
+      render();
+    }
+
+    btnReal.addEventListener('click', function () {
+      state.shuffled = false;
+      state.started = true;
+      start();
+      play();
+    });
+    btnShuffled.addEventListener('click', function () {
+      state.shuffled = true;
+      state.started = true;
+      start();
+      play();
+    });
+    btnRetrain.addEventListener('click', function () {
+      state.started = true;
+      start();
+      play();
+    });
+    btnPlay.addEventListener('click', function () {
+      state.started = true;
+      if (done()) {
+        start();
+        play();
+      } else if (state.timer) {
+        stop();
+        render();
+      } else {
+        play();
+      }
+    });
+    btnStep.addEventListener('click', function () {
+      state.started = true;
+      stop();
+      if (!done()) stepOnce();
+      render();
+    });
+    btnJump.addEventListener('click', function () {
+      state.started = true;
+      stop();
+      for (var i = 0; i < L.path.length && !done(); i++) {
+        stepOnce();
+        if (current && L.targets[current.center]) break;
+      }
+      render();
+    });
+    btnFinish.addEventListener('click', function () {
+      state.started = true;
+      stop();
+      while (!done()) stepOnce();
+      render();
+    });
+
+    function scoreOf(center, ctx) {
+      var v = V[vocabIndex[center]], u = U[vocabIndex[ctx]];
+      if (!v || !u) return 0;
+      var dot = 0;
+      for (var i = 0; i < WV_DIM; i++) dot += v[i] * u[i];
+      return wvSigmoid(dot);
+    }
+
+    function scoreChip(word, score) {
+      var chip = el('span', 'wv-pair');
+      chip.appendChild(el('b', null, word));
+      chip.appendChild(el('small', null, score.toFixed(2)));
+      chip.style.borderColor = 'rgba(217, 119, 87, ' + (0.15 + score * 0.85).toFixed(2) + ')';
+      return chip;
+    }
+
+    function render() {
+      btnReal.classList.toggle('is-active', !state.shuffled);
+      btnShuffled.classList.toggle('is-active', state.shuffled);
+
+      var finished = done();
+      view.render(current ? current.pos : null, WV_RADIUS);
+
+      taskCtx.innerHTML = '';
+      if (current) {
+        taskWord.textContent = current.center;
+        taskWord.className = 'wv-task-word' +
+          (L.targets[current.center] ? ' ' + WV_GROUP_CLS[L.targets[current.center]] : '');
+        current.ctx.forEach(function (c) {
+          taskCtx.appendChild(scoreChip(c, scoreOf(current.center, c)));
+        });
+      } else {
+        taskWord.textContent = '—';
+        taskWord.className = 'wv-task-word';
+      }
+
+      var appleTasks = state.tasks[L.anchor];
+      var appleVec = V[vocabIndex[L.anchor]];
+      L.words.forEach(function (w) {
+        var card = cards[w.id];
+        var seen = state.tasks[w.id];
+        card.root.classList.toggle('is-live', !!(current && current.center === w.id));
+
+        card.body.innerHTML = '';
+        if (!seen) {
+          card.body.appendChild(el('span', 'wv-card-empty', t.cardEmpty));
+        } else {
+          seen.order.forEach(function (c) {
+            var sharedChip = w.id !== L.anchor && appleTasks && appleTasks.set[c];
+            card.body.appendChild(el('span', 'wv-tally-chip' + (sharedChip ? ' is-shared' : ''), c));
+          });
+        }
+
+        if (w.id === L.anchor) {
+          card.badge.textContent = t.cardAnchor;
+          card.fill.style.width = '100%';
+        } else {
+          var cos = wvCosine(appleVec, V[vocabIndex[w.id]]);
+          card.badge.textContent = 'cos ' + cos.toFixed(2);
+          card.fill.style.width = (Math.max(0, cos) * 100).toFixed(1) + '%';
+        }
+      });
+
+      corpusTitle.textContent = finished
+        ? t.corpusTrainDone(WV_EPOCHS)
+        : (current
+          ? t.corpusEpoch(state.epoch + 1, WV_EPOCHS, current.index, L.path.length)
+          : t.corpusIdle);
+
+      var vectors = L.words.map(function (w) { return V[vocabIndex[w.id]]; });
+      var iApple = wvIndex(L.words, L.anchor);
+      bar.style.width = Math.min(100, (state.epoch / WV_EPOCHS) * 100).toFixed(1) + '%';
+      taskTitle.textContent = finished ? t.taskTitleLast : t.taskTitle;
+      btnPlay.textContent = finished ? t.replay : (state.timer ? t.pause : t.play);
+
+      sampleVal.textContent = state.samples.toLocaleString();
+      simNearVal.textContent = wvCosine(vectors[iApple], vectors[wvIndex(L.words, L.near)]).toFixed(2);
+      simFarVal.textContent = wvCosine(vectors[iApple], vectors[wvIndex(L.words, L.far)]).toFixed(2);
+
+      hint.textContent = state.shuffled ? t.hintShuffled : t.hintReal;
+
+      if (!finished) {
+        out.className = 'xpl-out';
+        outLabel.textContent = t.outBusyLabel;
+        outText.textContent = state.shuffled ? t.outBusyShuffled : t.outBusyReal;
+        outEffect.textContent = '';
+      } else if (state.shuffled) {
+        out.className = 'xpl-out';
+        outLabel.textContent = t.outBadLabel;
+        outText.textContent = t.outBadText;
+        outEffect.textContent = t.outBadEffect;
+      } else {
+        out.className = 'xpl-out is-good';
+        outLabel.textContent = t.outGoodLabel;
+        outText.textContent = t.outGoodText;
+        outEffect.textContent = t.outGoodEffect;
+      }
+    }
+
+    mount.appendChild(tabs);
+    mount.appendChild(corpusPanel);
+    mount.appendChild(taskPanel);
+    mount.appendChild(cardsPanel);
+    mount.appendChild(stats);
+    mount.appendChild(controls);
+    mount.appendChild(out);
+
+    setup();
+    render();
+    root.classList.add('is-ready');
+
+    if (window.IntersectionObserver) {
+      var io = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && !state.started) {
+            state.started = true;
+            io.disconnect();
+            play();
+          } else if (!entry.isIntersecting && state.timer) {
+            stop();
+            render();
+          }
+        });
+      }, { threshold: 0.25 });
+      io.observe(root);
+    } else {
+      state.started = true;
+      play();
+    }
+  }
+
   /* ====================================================================== */
 
   var WIDGETS = {
     'nlu-router': initNluRouter,
     'nlu-anchor': initNluAnchor,
     'asr-decoder': initAsrDecoder,
-    'tensorboard-install': initTensorboardInstall
+    'tensorboard-install': initTensorboardInstall,
+    'wv-window': initWvWindow,
+    'wv-skipgram': initWvSkipgram
   };
 
   function boot() {

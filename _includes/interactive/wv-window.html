@@ -1,0 +1,46 @@
+{% assign wv_lang = page.lang | default: 'zh' %}
+<div class="xpl" data-explorable="wv-window" data-lang="{{ wv_lang }}">
+  {% if wv_lang == 'en' %}
+  <p class="xpl-kicker">Interactive — distributional regularity</p>
+  <h3 class="xpl-title">Slide a window over a corpus and the semantics surface on their own</h3>
+  <p class="xpl-intro">
+    The thirteen lines below are a tiny corpus. A fixed-width window starts at the first word and steps forward, one token at a time;
+    at every stop, the words inside the window become the center word's "context." That is the only rule — no model, no vectors.
+    Watch the three fruit lines and the three city lines: once the sweep finishes, the contexts each group collected are nearly the same set.
+  </p>
+  <div data-role="mount">
+    <p class="xpl-fallback">
+      This interactive needs JavaScript. After the window finishes the corpus, the contexts collected for "apple"
+      are ate, an, This, tastes, sweet — and "banana" / "watermelon" collect almost the same list — while "Beijing"
+      collects will, visit, housing, prices, duck, tastes. Same-type words share about five contexts; cross-type sharing
+      is near zero. The gap comes entirely from the corpus itself; nobody labeled "this is a fruit, that is a city."
+    </p>
+  </div>
+  <p class="xpl-note">
+    This is a toy corpus written to make the mechanism visible. Real text is much messier, but the window rule is
+    exactly this simple — it is how word2vec draws its training samples.
+    You can change the radius: smaller favors tight collocations; larger leans toward topical relatedness.
+  </p>
+  {% else %}
+  <p class="xpl-kicker">互动 — 分布规律</p>
+  <h3 class="xpl-title">一个窗口扫过语料，语义就自己冒出来了</h3>
+  <p class="xpl-intro">
+    下面十三行是一小段语料。一个宽度固定的窗口从第一个词开始，逐个词往后挪；
+    每停一次，就把落在窗口里的词记成中心词的「上下文」。规则只有这一条，没有模型，没有向量。
+    盯着水果那三行和城市那三行——扫完之后，它们各自收集到的上下文词几乎是同一批。
+  </p>
+  <div data-role="mount">
+    <p class="xpl-fallback">
+      这个互动需要 JavaScript。它的内容是：窗口扫完这段语料后，「苹果」收集到的上下文是
+      吃、了、这个、真、甜，「香蕉」「西瓜」收集到的几乎一模一样；而「北京」收集到的是
+      要、去、的、房价。同类词共享的上下文词有五个左右，不同类之间接近于零。
+      这个差别完全来自语料本身，不需要任何人去标注「这是水果、那是城市」。
+    </p>
+  </div>
+  <p class="xpl-note">
+    这是一段为了看清机制而写的玩具语料，中文已经预先分好词。真实语料要脏得多，
+    但窗口的规则就是这么简单——word2vec 取训练样本用的正是这一条。
+    窗口半径可以调：调小则上下文更看重紧邻的搭配，调大则更偏向主题相关。
+  </p>
+  {% endif %}
+</div>
