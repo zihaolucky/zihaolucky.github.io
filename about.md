@@ -30,6 +30,7 @@ Accuracy alone is not enough. AI deployed to millions of users must be inspectab
 ## Academic Services
 
 - **Conference Program Committee Member / Reviewer**
+  - ACM The Web Conference (WWW / TheWebConf) Long Papers, 2027
   - Empirical Methods in Natural Language Processing (EMNLP) Industry Track, 2026
   - ACM Conference on Recommender Systems (RecSys) Research & Practice Notes and Demos Tracks, 2026
 - **Workshop Reviewer**
